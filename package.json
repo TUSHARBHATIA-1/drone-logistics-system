@@ -1,0 +1,22 @@
+{
+  "name": "drone-logistics-system",
+  "version": "1.0.0",
+  "description": "Drone Logistics & Route Optimization System",
+  "main": "index.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "compile-engine": "g++ algorithms/main.cpp -o algorithms/route_optimizer",
+    "install-all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+  },
+  "keywords": [
+    "drone",
+    "logistics",
+    "route-optimization",
+    "dijkstra",
+    "react",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC"
+}

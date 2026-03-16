@@ -1,0 +1,20 @@
+# Node
+node_modules/
+dist/
+build/
+.env
+
+# C++
+*.exe
+*.o
+*.out
+algorithms/route_optimizer
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
