@@ -42,8 +42,8 @@ const Navbar = () => {
   ];
 
   return (
-    <header className="h-24 bg-dark-950/60 backdrop-blur-2xl border-b border-dark-900/50 sticky top-0 z-50 transition-all duration-500 overflow-hidden">
-      <div className="max-w-screen-xl mx-auto w-full h-full px-4 flex items-center justify-between overflow-hidden">
+    <header className="h-24 bg-dark-950/60 backdrop-blur-2xl border-b border-dark-900/50 sticky top-0 z-50 transition-all duration-500">
+      <div className="max-w-screen-xl mx-auto w-full h-full px-4 flex items-center justify-between">
         {/* Brand & Desktop Nav */}
         <div className="flex items-center gap-4 md:gap-8 overflow-hidden flex-wrap lg:flex-nowrap">
           <Link to="/" className="flex items-center gap-3 group relative shrink-0">
@@ -132,7 +132,7 @@ const Navbar = () => {
                 initial={{ opacity: 0, y: 15, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="absolute right-0 mt-4 w-96 premium-card overflow-hidden shadow-2xl z-50 border-primary-500/20"
+                 className="absolute right-0 mt-4 w-[calc(100vw-2rem)] sm:w-96 premium-card overflow-hidden shadow-2xl z-50 border-primary-500/20"
               >
                 <div className="p-5 border-b border-dark-800 flex items-center justify-between bg-dark-900/40">
                   <h4 className="text-[10px] font-black uppercase tracking-[0.25em] text-white">Neural Hub Notifications</h4>

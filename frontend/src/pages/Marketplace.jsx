@@ -173,7 +173,7 @@ const Marketplace = () => {
   };
 
   const renderSidebar = () => (
-    <div className="w-80 flex-shrink-0 space-y-10 premium-card p-8 h-fit sticky top-28 bg-dark-900/60">
+    <div className="w-full xl:w-80 flex-shrink-0 space-y-8 md:space-y-10 premium-card p-6 md:p-8 h-fit xl:sticky xl:top-28 bg-dark-900/60">
       <div className="space-y-6">
         <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-dark-500 flex items-center gap-3 px-1">
           <Filter className="w-4 h-4 text-primary-500" /> Filters
@@ -351,16 +351,16 @@ const Marketplace = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {sellItems.map(item => (
-          <div key={item?._id} className="premium-card flex group overflow-hidden h-64 hover:-translate-y-1">
-            <div className="w-56 h-full overflow-hidden bg-dark-950 relative">
+          <div key={item?._id} className="premium-card flex flex-col sm:flex-row group overflow-hidden h-auto sm:h-64 hover:-translate-y-1">
+            <div className="w-full sm:w-56 h-48 sm:h-full overflow-hidden bg-dark-950 relative shrink-0">
               <img src={item?.image} alt={item?.name} className="w-full h-full object-cover opacity-50 group-hover:scale-110 group-hover:opacity-80 transition-all duration-1000" />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-dark-950"></div>
+              <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-transparent via-transparent to-dark-950"></div>
             </div>
-            <div className="flex-1 p-8 flex flex-col justify-between">
+            <div className="flex-1 p-6 md:p-8 flex flex-col justify-between">
               <div className="space-y-4">
-                 <div className="flex justify-between items-start">
-                    <h3 className="text-xl font-black text-white uppercase tracking-tight truncate max-w-[150px]">{item?.name}</h3>
-                    <span className="text-2xl font-black text-primary-400 font-mono tracking-tighter">${item?.price}</span>
+                 <div className="flex justify-between items-start gap-4">
+                    <h3 className="text-lg md:text-xl font-black text-white uppercase tracking-tight truncate">{item?.name}</h3>
+                    <span className="text-xl md:text-2xl font-black text-primary-400 font-mono tracking-tighter">${item?.price}</span>
                  </div>
                  <div className="flex items-center gap-3 px-1">
                     <div className="w-2 h-2 rounded-full bg-primary-500 group-hover:animate-ping"></div>
@@ -369,14 +369,14 @@ const Marketplace = () => {
                  <p className="text-xs text-dark-400 line-clamp-2 font-medium italic opacity-70">"{item?.desc}"</p>
               </div>
               
-              <div className="flex gap-4">
+              <div className="flex gap-4 mt-6 sm:mt-0">
                 <button 
                   onClick={() => setSelectedSeller(item)}
                   className="flex-1 py-4 bg-dark-950 border border-dark-800 rounded-2xl text-[9px] font-black text-white uppercase tracking-widest hover:border-primary-500/50 transition-all flex items-center justify-center gap-3"
                 >
                   <Phone className="w-4 h-4 text-primary-500" /> Access Intel
                 </button>
-                <button className="w-14 h-14 bg-dark-950 border border-dark-800 rounded-2xl flex items-center justify-center hover:border-primary-500/30 transition-all text-dark-500">
+                <button className="w-14 h-14 bg-dark-950 border border-dark-800 rounded-2xl flex items-center justify-center hover:border-primary-500/30 transition-all text-dark-500 shrink-0">
                   <MessageSquare className="w-5 h-5" />
                 </button>
               </div>
@@ -390,7 +390,7 @@ const Marketplace = () => {
   try {
     return (
       <div className="max-w-[1600px] mx-auto anim-fade-in space-y-12">
-      <div className="flex gap-10 relative items-start">
+      <div className="flex flex-col xl:flex-row gap-10 relative items-start">
         {renderSidebar()}
 
         <div className="flex-1 space-y-12 pb-20">
@@ -426,14 +426,14 @@ const Marketplace = () => {
             </button>
           </div>
 
-          <div className="flex gap-2 p-2 bg-dark-900/60 backdrop-blur-3xl rounded-[24px] border border-dark-800/80 w-fit">
+          <div className="flex gap-2 p-2 bg-dark-900/60 backdrop-blur-3xl rounded-[24px] border border-dark-800/80 w-full md:w-fit overflow-x-auto no-scrollbar">
             {sections.map(s => {
               const Icon = s.icon;
               return (
                 <button
                   key={s.id}
                   onClick={() => setActiveSection(s.id)}
-                  className={`flex items-center gap-4 px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 ${activeSection === s.id ? 'bg-primary-600 text-white shadow-2xl shadow-primary-600/40 translate-y-[-2px]' : 'text-dark-500 hover:text-white hover:bg-dark-900/50'}`}
+                  className={`flex items-center justify-center gap-4 px-6 md:px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 whitespace-nowrap min-w-fit ${activeSection === s.id ? 'bg-primary-600 text-white shadow-2xl shadow-primary-600/40 translate-y-[-2px]' : 'text-dark-500 hover:text-white hover:bg-dark-900/50'}`}
                 >
                   <Icon className="w-4 h-4" />
                   {s.label}
@@ -495,12 +495,12 @@ const Marketplace = () => {
         {/* Submission Modal */}
         {showAddModal && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-dark-950/95 backdrop-blur-3xl anim-fade-in">
-            <div className="relative w-full max-w-2xl premium-card p-16 space-y-12 border-primary-500/20 shadow-primary-500/5">
+            <div className="relative w-full max-w-2xl premium-card p-8 md:p-16 space-y-8 md:space-y-12 border-primary-500/20 shadow-primary-500/5 max-h-[90vh] overflow-y-auto">
               <button 
                 onClick={() => setShowAddModal(false)} 
-                className="absolute top-10 right-10 text-dark-500 hover:text-white bg-dark-900/50 p-3 rounded-2xl transition-all"
+                className="absolute top-6 md:top-10 right-6 md:right-10 text-dark-500 hover:text-white bg-dark-900/50 p-2 md:p-3 rounded-2xl transition-all z-10"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 md:w-6 md:h-6" />
               </button>
 
               <div className="flex items-center gap-6">
@@ -523,7 +523,7 @@ const Marketplace = () => {
                   );
                   setShowAddModal(false);
                 }}
-                className="grid grid-cols-2 gap-10"
+                className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-10"
               >
                 <div className="space-y-4 col-span-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-dark-500 px-1">Operational Designation</label>

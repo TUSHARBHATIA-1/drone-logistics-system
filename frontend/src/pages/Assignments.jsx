@@ -98,27 +98,27 @@ const Assignments = () => {
       <div className="max-w-[1600px] mx-auto space-y-12 anim-fade-in">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-        <div className="space-y-2">
+        <div className="space-y-3">
            <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-dark-500">Mission Matrix Active</span>
            </div>
-           <h2 className="text-4xl lg:text-5xl font-black text-white uppercase tracking-tight leading-none">Delivery <span className="text-primary-500">Assignments</span></h2>
-           <p className="text-dark-400 font-medium text-lg leading-relaxed max-w-2xl">Coordinate and optimize autonomous delivery pathways across the sector.</p>
+           <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight leading-none">Delivery <span className="text-primary-500">Assignments</span></h2>
+           <p className="text-dark-400 font-medium text-base md:text-lg leading-relaxed max-w-2xl px-1">Coordinate and optimize autonomous delivery pathways across the sector.</p>
         </div>
         
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
            <button 
              type="button" 
              onClick={fetchAssignments} 
-             className="btn-secondary flex items-center gap-3"
+             className="btn-secondary flex-1 sm:flex-none flex items-center justify-center gap-3 py-4"
            >
              <RefreshCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Update Log
            </button>
            <button 
              type="button" 
              onClick={() => setShowModal(true)} 
-             className="btn-primary flex items-center gap-3"
+             className="btn-primary flex-1 sm:flex-none flex items-center justify-center gap-3 py-4"
            >
              <Plus className="w-5 h-5" /> Initialize Mission
            </button>
@@ -128,12 +128,12 @@ const Assignments = () => {
       {/* Route Visualization Map (Enhanced) */}
       {lastMissionMap && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 anim-fade-in">
-           <div className="lg:col-span-8 h-[500px] premium-card p-1">
+           <div className="lg:col-span-8 h-[350px] md:h-[500px] premium-card p-1">
               <div className="h-full bg-dark-950/80 rounded-[1.8rem] overflow-hidden">
                  <RouteMap data={lastMissionMap} />
               </div>
            </div>
-           <div className="lg:col-span-4 premium-card p-10 flex flex-col justify-between bg-primary-900/10 border-primary-500/20">
+           <div className="lg:col-span-4 premium-card p-8 md:p-10 flex flex-col justify-between bg-primary-900/10 border-primary-500/20">
               <div className="space-y-8">
                  <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-primary-600/20 rounded-2xl flex items-center justify-center border border-primary-500/30">
@@ -200,7 +200,7 @@ const Assignments = () => {
                   animate: { opacity: 1, y: 0 }
                 }}
                 whileHover={{ y: -5, borderColor: 'rgba(59, 130, 246, 0.5)' }}
-                className="premium-card group hover:bg-dark-900/60 p-6 lg:p-4 flex flex-col lg:flex-row items-center gap-10"
+                className="premium-card group hover:bg-dark-900/60 p-6 md:p-8 lg:p-4 flex flex-col lg:flex-row items-center gap-8 md:gap-10"
               >
                 {/* ID & Status */}
                 <div className="lg:w-48 text-center lg:text-left space-y-2">
@@ -306,7 +306,7 @@ const Assignments = () => {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-2xl premium-card p-12 space-y-10"
+              className="relative w-full max-w-2xl premium-card p-8 md:p-12 space-y-8 md:space-y-10 max-h-[90vh] overflow-y-auto"
             >
               <button 
                 type="button" 
@@ -321,13 +321,13 @@ const Assignments = () => {
                     <Box className="w-8 h-8 text-primary-400" />
                  </div>
                  <div>
-                    <h3 className="text-3xl font-black text-white uppercase tracking-tight">Mission Initializer</h3>
+                    <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">Mission Initializer</h3>
                     <p className="text-sm text-dark-400 font-medium">Broadcast new delivery parameters to the autonomous grid.</p>
                  </div>
               </div>
               
-              <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-10">
-                <div className="space-y-10 col-span-2 md:col-span-1">
+              <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-10">
+                <div className="space-y-10 col-span-1 sm:col-span-1">
                   <div className="space-y-4">
                     <label className="text-[10px] font-black uppercase tracking-widest text-dark-500 flex items-center gap-2 px-1">
                        <MapPin className="w-3 h-3 text-primary-500" /> Origin Hub Entity

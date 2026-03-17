@@ -52,14 +52,14 @@ const Profile = () => {
         animate="show"
         className="max-w-5xl mx-auto space-y-12"
       >
-      <motion.div variants={cardVariants}>
-        <h2 className="text-4xl text-white font-black uppercase tracking-tight">Operator <span className="text-primary-500">Matrix</span></h2>
-        <p className="text-dark-400 mt-2 font-medium">Manage your global industrial credentials and fleet protocols.</p>
+      <motion.div variants={cardVariants} className="px-1">
+        <h2 className="text-3xl md:text-4xl text-white font-black uppercase tracking-tight">Operator <span className="text-primary-500">Matrix</span></h2>
+        <p className="text-dark-400 mt-2 font-medium text-sm md:text-base">Manage your global industrial credentials and fleet protocols.</p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
         <div className="space-y-8">
-          <motion.div variants={cardVariants} className="premium-card p-8 text-center bg-dark-900/40">
+          <motion.div variants={cardVariants} className="premium-card p-6 md:p-8 text-center bg-dark-900/40">
             <motion.div 
               whileHover={{ rotate: 5, scale: 1.05 }}
               className="w-28 h-28 rounded-[2.5rem] bg-gradient-to-br from-primary-500 to-primary-900 mx-auto flex items-center justify-center border-4 border-dark-900 shadow-2xl mb-6 group relative overflow-hidden"
@@ -96,8 +96,8 @@ const Profile = () => {
         </div>
 
         <div className="lg:col-span-2 space-y-8">
-          <motion.div variants={cardVariants} className="premium-card p-10 bg-dark-900/40">
-            <h3 className="text-xs font-black uppercase tracking-[0.3em] text-white mb-8 border-b border-dark-800 pb-6 opacity-60">General Manifest</h3>
+          <motion.div variants={cardVariants} className="premium-card p-6 md:p-10 bg-dark-900/40">
+            <h3 className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-white mb-6 md:mb-8 border-b border-dark-800 pb-4 md:pb-6 opacity-60">General Manifest</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                <div className="space-y-2">
                   <label className="text-[10px] font-black text-dark-500 uppercase tracking-widest pl-2">Master Terminal Admin</label>
@@ -131,8 +131,8 @@ const Profile = () => {
             </motion.button>
           </motion.div>
 
-          <motion.div variants={cardVariants} className="premium-card p-10 bg-dark-900/40">
-            <h3 className="text-xs font-black uppercase tracking-[0.3em] text-white mb-8 border-b border-dark-800 pb-6 opacity-60">Security & Billing Protocls</h3>
+          <motion.div variants={cardVariants} className="premium-card p-6 md:p-10 bg-dark-900/40">
+            <h3 className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-white mb-6 md:mb-8 border-b border-dark-800 pb-4 md:pb-6 opacity-60">Security & Billing Protocls</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {[
                 { icon: CreditCard, title: 'Acquisition Method', desc: 'Secure Terminal (•••• 4242)' },

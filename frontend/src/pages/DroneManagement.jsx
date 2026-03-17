@@ -133,28 +133,28 @@ const DroneManagement = () => {
     return (
       <div className="max-w-[1600px] mx-auto space-y-12 anim-fade-in">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 md:gap-12">
         <div className="space-y-4">
            {error && (
              <div className="p-4 bg-red-600/10 border border-red-500/20 rounded-2xl text-red-500 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3">
                <AlertCircle className="w-5 h-5" /> {error}
              </div>
            )}
-           <div className="space-y-2">
+           <div className="space-y-3">
               <div className="flex items-center gap-3">
                  <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-dark-500">Fleet Sync Online</span>
               </div>
-              <h2 className="text-4xl lg:text-5xl font-black text-white uppercase tracking-tight leading-none">Fleet Command <span className="text-primary-500">Hub</span></h2>
-              <p className="text-dark-400 font-medium text-lg leading-relaxed max-w-2xl">Visual telemetry and hull status for your autonomous industrial network.</p>
+              <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight leading-none">Fleet Command <span className="text-primary-500">Hub</span></h2>
+              <p className="text-dark-400 font-medium text-base md:text-lg leading-relaxed max-w-2xl px-1">Visual telemetry and hull status for your autonomous industrial network.</p>
            </div>
         </div>
         
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="btn-primary group py-5 px-10 rounded-[24px]"
+          className="btn-primary group py-5 px-10 rounded-[24px] w-full lg:w-auto"
         >
-          <span className="flex items-center gap-3">
+          <span className="flex items-center justify-center gap-3">
              <Plus className="w-6 h-6" /> Initialize New Asset
           </span>
         </button>
@@ -234,11 +234,11 @@ const DroneManagement = () => {
                   </div>
                 </div>
 
-                <div className="p-8 flex-1 flex flex-col space-y-8">
-                  <div className="grid grid-cols-2 gap-8">
+                <div className="p-6 md:p-8 flex-1 flex flex-col space-y-6 md:space-y-8">
+                  <div className="grid grid-cols-2 gap-6 md:gap-8">
                     <div className="space-y-2">
                        <p className="text-[9px] text-dark-500 font-black uppercase tracking-widest">Model Frame</p>
-                       <p className="text-sm font-black text-white tracking-tight uppercase">{drone?.modelNumber}</p>
+                       <p className="text-sm font-black text-white tracking-tight uppercase truncate">{drone?.modelNumber}</p>
                     </div>
                     <div className="space-y-2">
                        <p className="text-[9px] text-dark-500 font-black uppercase tracking-widest">Payload Cap.</p>
@@ -265,34 +265,34 @@ const DroneManagement = () => {
                   <div className="pt-6 border-t border-dark-900">
                     <p className="text-[9px] text-dark-500 font-black uppercase tracking-widest mb-4">Active Mission Matrix</p>
                     {drone?.currentTask ? (
-                      <div className="bg-dark-950 p-5 rounded-[24px] border border-dark-800 flex items-center justify-between group/task hover:border-primary-500/30 transition-all cursor-pointer">
-                        <div className="flex items-center gap-5">
-                          <div className="p-4 bg-primary-600/15 rounded-2xl border border-primary-500/20">
-                            <Package className="w-6 h-6 text-primary-400" />
+                      <div className="bg-dark-950 p-4 md:p-5 rounded-[20px] md:rounded-[24px] border border-dark-800 flex items-center justify-between group/task hover:border-primary-500/30 transition-all cursor-pointer">
+                        <div className="flex items-center gap-4 md:gap-5">
+                          <div className="p-3 md:p-4 bg-primary-600/15 rounded-xl md:rounded-2xl border border-primary-500/20 shadow-inner">
+                            <Package className="w-5 h-5 md:w-6 md:h-6 text-primary-400" />
                           </div>
-                          <div>
-                             <p className="text-[9px] text-dark-600 font-black uppercase tracking-widest leading-none mb-2">Registry ID</p>
-                             <span className="text-sm font-black text-white tracking-tight">{drone?.currentTask}</span>
+                          <div className="min-w-0">
+                             <p className="text-[8px] md:text-[9px] text-dark-600 font-black uppercase tracking-widest leading-none mb-1 md:mb-2">Registry ID</p>
+                             <span className="text-xs md:text-sm font-black text-white tracking-tight truncate block">{drone?.currentTask}</span>
                           </div>
                         </div>
-                        <ArrowRight className="w-5 h-5 text-dark-700 group-hover/task:text-primary-500 group-hover/task:translate-x-1 transition-all" />
+                        <ArrowRight className="w-4 h-4 md:w-5 md:h-5 text-dark-700 group-hover/task:text-primary-500 group-hover/task:translate-x-1 transition-all shrink-0" />
                       </div>
                     ) : (
-                      <div className="flex items-center gap-4 py-5 px-8 bg-dark-950/40 rounded-[24px] border border-dashed border-dark-800 opacity-60">
+                      <div className="flex items-center gap-4 py-4 md:py-5 px-6 md:px-8 bg-dark-950/40 rounded-[20px] md:rounded-[24px] border border-dashed border-dark-800 opacity-60">
                         <div className="w-2 h-2 rounded-full bg-dark-800"></div>
-                        <span className="text-[10px] text-dark-600 font-black uppercase tracking-widest">Idle status: No vectors</span>
+                        <span className="text-[8px] md:text-[10px] text-dark-600 font-black uppercase tracking-widest">Idle status: No vectors</span>
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div className="px-8 py-6 bg-dark-950/40 flex justify-end gap-4 border-t border-dark-800">
+                <div className="px-6 md:px-8 py-5 md:py-6 bg-dark-950/40 flex flex-col sm:flex-row justify-end gap-3 md:gap-4 border-t border-dark-800 mt-auto">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleRepair(drone?.droneId || drone?.id, drone?._id)}
                     type="button"
-                    className="flex-1 py-4 text-[9px] font-black uppercase tracking-widest text-dark-500 hover:text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/30 border border-transparent rounded-2xl transition-all flex items-center justify-center gap-3 active:scale-95"
+                    className="flex-1 py-3 md:py-4 text-[9px] font-black uppercase tracking-widest text-dark-500 hover:text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/30 border border-transparent rounded-xl md:rounded-2xl transition-all flex items-center justify-center gap-3 active:scale-95"
                   >
                     <Wrench className="w-4 h-4" /> Repair Hub
                   </motion.button>
@@ -301,7 +301,7 @@ const DroneManagement = () => {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleSell(drone?.droneId || drone?.id, drone?._id)}
                     type="button"
-                    className="flex-1 py-4 text-[9px] font-black uppercase tracking-widest text-dark-500 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/30 border border-transparent rounded-2xl transition-all flex items-center justify-center gap-3 active:scale-95"
+                    className="flex-1 py-3 md:py-4 text-[9px] font-black uppercase tracking-widest text-dark-500 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/30 border border-transparent rounded-xl md:rounded-2xl transition-all flex items-center justify-center gap-3 active:scale-95"
                   >
                     <Trash2 className="w-4 h-4" /> Decommission
                   </motion.button>
@@ -320,69 +320,69 @@ const DroneManagement = () => {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-2xl premium-card p-16 space-y-12 border-primary-500/20"
+              className="relative w-full max-w-2xl premium-card p-8 md:p-16 space-y-8 md:space-y-12 border-primary-500/20 max-h-[90vh] overflow-y-auto"
             >
               <button 
                 onClick={() => setIsModalOpen(false)} 
-                className="absolute top-10 right-10 p-3 hover:bg-dark-900 border border-dark-800 rounded-2xl text-dark-500 hover:text-white transition-all shadow-xl"
+                className="absolute top-6 md:top-10 right-6 md:right-10 p-2 md:p-3 hover:bg-dark-900 border border-dark-800 rounded-xl md:rounded-2xl text-dark-500 hover:text-white transition-all shadow-xl z-20"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 md:w-6 md:h-6" />
               </button>
               
-              <div className="flex items-center gap-6">
-                 <div className="w-16 h-16 bg-primary-600/20 rounded-3xl flex items-center justify-center border border-primary-500/30 shadow-xl shadow-primary-500/10 animate-float">
+              <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
+                 <div className="w-16 h-16 bg-primary-600/20 rounded-3xl flex items-center justify-center border border-primary-500/30 shadow-xl shadow-primary-500/10 animate-float shrink-0">
                     <Plane className="w-8 h-8 text-primary-400" />
                  </div>
                  <div>
-                    <h3 className="text-4xl font-black text-white uppercase tracking-tight">Hull Entry Protocol</h3>
-                    <p className="text-sm text-dark-400 font-medium">Broadcast new industrial signature to the autonomous sector hub.</p>
+                    <h3 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight">Hull Entry Protocol</h3>
+                    <p className="text-sm text-dark-400 font-medium mt-1">Broadcast new industrial signature to the autonomous sector hub.</p>
                  </div>
               </div>
               
-              <form onSubmit={handleAddDrone} className="grid grid-cols-2 gap-10">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-dark-500 ml-2">Registry Designation (ID)</label>
-                  <input name="droneId" value={formData.droneId} onChange={handleInputChange} placeholder="HULL-01-X" className="input-field w-full py-5 text-sm font-black uppercase" required />
-                </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-dark-500 ml-2">Model Frame Group</label>
-                  <input name="modelNumber" value={formData.modelNumber} onChange={handleInputChange} placeholder="Phantom Raider v4" className="input-field w-full py-5 text-sm font-black uppercase" required />
-                </div>
-                
-                <div className="space-y-3 col-span-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-dark-500 ml-2">Digital Signature Imagery (URL)</label>
-                  <input name="image" value={formData.image} onChange={handleInputChange} placeholder="https://unsplash.com/orbital-signature-01" className="input-field w-full py-5 text-xs font-mono" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-8 col-span-2">
+                <form onSubmit={handleAddDrone} className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-10">
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-dark-500 ml-2">Operational State</label>
-                    <select name="status" value={formData.status} onChange={handleInputChange} className="input-field w-full bg-dark-900 py-5 h-[68px] text-[10px] font-black uppercase">
-                      <option value="available">Ready for Command</option>
-                      <option value="busy">Active Deployment</option>
-                      <option value="maintenance">Maintenance Link</option>
-                    </select>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-dark-500 ml-2">Registry Designation (ID)</label>
+                    <input name="droneId" value={formData.droneId} onChange={handleInputChange} placeholder="HULL-01-X" className="input-field w-full py-5 text-sm font-black uppercase" required />
                   </div>
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-dark-500 ml-2">Charge Initialization (%)</label>
-                    <input name="currentBattery" type="number" value={formData.currentBattery} onChange={handleInputChange} className="input-field w-full py-5 text-sm font-black" required />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-dark-500 ml-2">Model Frame Group</label>
+                    <input name="modelNumber" value={formData.modelNumber} onChange={handleInputChange} placeholder="Phantom Raider v4" className="input-field w-full py-5 text-sm font-black uppercase" required />
                   </div>
-                </div>
-
-                <div className="col-span-2 pt-6">
-                  <motion.button 
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    type="submit" 
-                    className="btn-primary w-full py-6 rounded-[28px] shadow-primary-500/20 hover:shadow-primary-500/40 group/submit"
-                  >
-                     <span className="flex items-center justify-center gap-4">
-                        <ShieldCheck className="w-6 h-6 group-hover/submit:scale-125 transition-transform" />
-                        Initialize Hull Clearance
-                     </span>
-                  </motion.button>
-                </div>
-              </form>
+                  
+                  <div className="space-y-3 col-span-1 sm:col-span-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-dark-500 ml-2">Digital Signature Imagery (URL)</label>
+                    <input name="image" value={formData.image} onChange={handleInputChange} placeholder="https://unsplash.com/orbital-signature-01" className="input-field w-full py-5 text-xs font-mono" />
+                  </div>
+  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 col-span-1 sm:col-span-2">
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-dark-500 ml-2">Operational State</label>
+                      <select name="status" value={formData.status} onChange={handleInputChange} className="input-field w-full bg-dark-900 py-5 h-[68px] text-[10px] font-black uppercase">
+                        <option value="available">Ready for Command</option>
+                        <option value="busy">Active Deployment</option>
+                        <option value="maintenance">Maintenance Link</option>
+                      </select>
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-dark-500 ml-2">Charge Initialization (%)</label>
+                      <input name="currentBattery" type="number" value={formData.currentBattery} onChange={handleInputChange} className="input-field w-full py-5 text-sm font-black" required />
+                    </div>
+                  </div>
+  
+                  <div className="col-span-1 sm:col-span-2 pt-6">
+                    <motion.button 
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      type="submit" 
+                      className="btn-primary w-full py-6 rounded-[28px] shadow-primary-500/20 hover:shadow-primary-500/40 group/submit"
+                    >
+                       <span className="flex items-center justify-center gap-4 text-xs md:text-sm">
+                          <ShieldCheck className="w-5 h-5 md:w-6 md:h-6 group-hover/submit:scale-125 transition-transform" />
+                          Initialize Hull Clearance
+                       </span>
+                    </motion.button>
+                  </div>
+                </form>
             </motion.div>
           </div>
         )}

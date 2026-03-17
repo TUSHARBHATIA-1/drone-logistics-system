@@ -43,7 +43,7 @@ const Landing = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
-        className="h-24 border-b border-dark-900/50 flex items-center justify-between px-8 md:px-16 sticky top-0 bg-dark-950/60 backdrop-blur-2xl z-50"
+        className="h-24 border-b border-dark-900/50 flex items-center justify-between px-6 md:px-16 sticky top-0 bg-dark-950/60 backdrop-blur-2xl z-50"
       >
         <div className="flex items-center gap-4">
           <motion.div 
@@ -56,17 +56,17 @@ const Landing = () => {
             SkyLogist <span className="text-primary-500">AI</span>
           </h1>
         </div>
-        <div className="flex items-center gap-8">
-          <Link to="/login" className="text-sm font-black uppercase tracking-widest text-dark-400 hover:text-white transition-colors">Login</Link>
+        <div className="flex items-center gap-4 md:gap-8">
+          <Link to="/login" className="text-[10px] md:text-sm font-black uppercase tracking-widest text-dark-400 hover:text-white transition-colors">Login</Link>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link to="/register" className="btn-primary py-4 px-8 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary-600/10">Get Started</Link>
+            <Link to="/register" className="btn-primary py-3 md:py-4 px-6 md:px-8 rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary-600/10">Get Started</Link>
           </motion.div>
         </div>
       </motion.nav>
 
       {/* Hero Section */}
-      <section className="relative py-32 px-8 md:px-16 flex flex-col items-center text-center">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-primary-600/10 blur-[150px] rounded-full -z-10"></div>
+      <section className="relative py-20 md:py-32 px-6 md:px-16 flex flex-col items-center text-center overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1000px] h-[500px] bg-primary-600/10 blur-[150px] rounded-full -z-10"></div>
         
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
@@ -82,9 +82,9 @@ const Landing = () => {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-          className="text-6xl md:text-8xl font-black mb-8 leading-[1.1] max-w-5xl tracking-tight"
+          className="text-4xl md:text-8xl font-black mb-8 leading-[1.1] max-w-5xl tracking-tight"
         >
-          Drone Logistics & <br/>
+          Drone Logistics & <br className="hidden md:block"/>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-primary-700">Route Optimization</span>
         </motion.h1>
         
@@ -92,7 +92,7 @@ const Landing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-xl md:text-2xl text-dark-400 max-w-3xl mb-16 font-medium leading-relaxed"
+          className="text-lg md:text-2xl text-dark-400 max-w-3xl mb-12 md:mb-16 font-medium leading-relaxed px-4"
         >
           Smart, Fast, and Autonomous. Revolutionizing the last-mile logistics with AI-driven orbital route planning and reactive drone fleet management.
         </motion.p>
@@ -101,15 +101,15 @@ const Landing = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="flex flex-col sm:flex-row items-center gap-6"
+          className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full sm:w-auto"
         >
-          <motion.div whileHover={{ y: -5 }} whileTap={{ scale: 0.98 }}>
-            <Link to="/register" className="btn-primary py-6 px-12 rounded-[24px] text-lg font-black flex items-center gap-4 group shadow-[0_20px_50px_rgba(59,130,246,0.15)]">
-              Start Deploying Fleet <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+          <motion.div whileHover={{ y: -5 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
+            <Link to="/register" className="btn-primary py-5 md:py-6 px-10 md:px-12 rounded-[24px] text-base md:text-lg font-black flex items-center justify-center gap-4 group shadow-[0_20px_50px_rgba(59,130,246,0.15)]">
+              Start Deploying Fleet <ArrowRight className="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-2 transition-transform" />
             </Link>
           </motion.div>
-          <Link to="/login" className="px-10 py-6 text-dark-300 hover:text-white font-black uppercase tracking-[0.2em] text-xs flex items-center gap-4 group transition-all">
-            <PlayCircle className="w-6 h-6 text-primary-500 group-hover:scale-110 transition-transform" /> Watch Demo
+          <Link to="/login" className="w-full sm:w-auto px-10 py-5 text-dark-300 hover:text-white font-black uppercase tracking-[0.2em] text-[10px] md:text-xs flex items-center justify-center gap-4 group transition-all">
+            <PlayCircle className="w-5 h-5 md:w-6 md:h-6 text-primary-500 group-hover:scale-110 transition-transform" /> Watch Demo
           </Link>
         </motion.div>
 
@@ -136,10 +136,10 @@ const Landing = () => {
                 alt="Drone Fleet Management" 
                 className="w-full h-full object-cover opacity-60 transition-transform duration-700"
               />
-              <div className="absolute bottom-10 left-10 right-10 flex items-center justify-between z-20">
-                 <div className="flex items-center gap-4 bg-dark-950/80 backdrop-blur-md px-6 py-3 rounded-2xl border border-dark-800">
-                    <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white">Live Telemetry Active</span>
+              <div className="absolute bottom-6 md:bottom-10 left-6 md:left-10 right-6 md:right-10 flex items-center justify-between z-20">
+                 <div className="flex items-center gap-3 md:gap-4 bg-dark-950/80 backdrop-blur-md px-4 md:px-6 py-2 md:py-3 rounded-2xl border border-dark-800">
+                    <div className="w-2 md:w-3 h-2 md:h-3 rounded-full bg-green-500 animate-pulse"></div>
+                    <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-white">Live Telemetry Active</span>
                  </div>
               </div>
            </div>
@@ -151,10 +151,10 @@ const Landing = () => {
         <div className="absolute inset-0 bg-primary-950/5 pointer-events-none"></div>
         <motion.div 
           {...fadeInUp}
-          className="text-center mb-24 space-y-4"
+          className="text-center mb-16 md:mb-24 space-y-4"
         >
-          <h2 className="text-5xl font-black tracking-tight">Enterprise Performance</h2>
-          <p className="text-dark-500 font-medium text-lg max-w-2xl mx-auto">Engineered for absolute reliability, sub-hour fulfillment, and tactical safety at planetary scale.</p>
+          <h2 className="text-3xl md:text-5xl font-black tracking-tight uppercase">Enterprise Performance</h2>
+          <p className="text-dark-500 font-medium text-base md:text-lg max-w-2xl mx-auto px-4">Engineered for absolute reliability, sub-hour fulfillment, and tactical safety at planetary scale.</p>
         </motion.div>
 
         <motion.div 
@@ -173,30 +173,30 @@ const Landing = () => {
               key={i}
               variants={fadeInUp}
               whileHover={{ y: -10, borderColor: 'rgba(59, 130, 246, 0.4)' }}
-              className="premium-card p-12 group"
+              className="premium-card p-8 md:p-12 group"
             >
-              <div className="w-16 h-16 bg-primary-600/10 rounded-2xl flex items-center justify-center mb-10 border border-primary-500/20 group-hover:bg-primary-600 transition-all duration-500 shadow-lg shadow-primary-900/5">
-                <feature.icon className="w-8 h-8 text-primary-400 group-hover:text-white transition-colors" />
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-primary-600/10 rounded-2xl flex items-center justify-center mb-8 md:mb-10 border border-primary-500/20 group-hover:bg-primary-600 transition-all duration-500 shadow-lg shadow-primary-900/5">
+                <feature.icon className="w-6 h-6 md:w-8 md:h-8 text-primary-400 group-hover:text-white transition-colors" />
               </div>
-              <h3 className="text-2xl font-black mb-6 uppercase tracking-tight">{feature.title}</h3>
-              <p className="text-dark-400 leading-relaxed font-semibold italic opacity-80 group-hover:opacity-100 transition-opacity">"{feature.desc}"</p>
+              <h3 className="text-xl md:text-2xl font-black mb-4 md:mb-6 uppercase tracking-tight">{feature.title}</h3>
+              <p className="text-sm md:text-dark-400 leading-relaxed font-semibold italic opacity-80 group-hover:opacity-100 transition-opacity">"{feature.desc}"</p>
             </motion.div>
           ))}
         </motion.div>
       </section>
 
       {/* How It Works Section */}
-      <section className="py-40 px-8 md:px-16 overflow-hidden">
+      <section className="py-20 md:py-40 px-6 md:px-16 overflow-hidden">
         <div className="flex flex-col lg:flex-row items-center gap-24 max-w-7xl mx-auto">
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="flex-1 space-y-10"
+            className="flex-1 space-y-8 md:space-y-10"
           >
-            <h2 className="text-6xl font-black leading-tight tracking-tight">Scale Operations <br/> <span className="text-primary-500 italic">In Seconds.</span></h2>
-            <p className="text-dark-400 text-xl font-medium leading-relaxed max-w-xl">Our simplified onboarding protocol allows logistics giants to transition to autonomous delivery without the traditional infrastructure overhead.</p>
+            <h2 className="text-4xl md:text-6xl font-black leading-tight tracking-tight uppercase text-center lg:text-left">Scale Operations <br className="hidden md:block"/> <span className="text-primary-500 italic">In Seconds.</span></h2>
+            <p className="text-dark-400 text-lg md:text-xl font-medium leading-relaxed max-w-xl mx-auto lg:mx-0 text-center lg:text-left px-4 md:px-0">Our simplified onboarding protocol allows logistics giants to transition to autonomous delivery without the traditional infrastructure overhead.</p>
             
             <div className="space-y-8 pt-6">
               {[
@@ -231,9 +231,8 @@ const Landing = () => {
             transition={{ duration: 1, type: "spring" }}
             className="flex-1 relative"
           >
-            <div className="absolute inset-0 bg-primary-600/10 blur-[100px] rounded-full"></div>
-            <div className="relative p-12 premium-card bg-dark-900/20 border-dark-800/80 grid grid-cols-2 gap-8 shadow-3xl">
-               <div className="p-8 bg-dark-950 border border-dark-800 rounded-3xl flex flex-col gap-4 group hover:border-green-500/30 transition-all">
+            <div className="relative p-6 md:p-12 premium-card bg-dark-900/20 border-dark-800/80 grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 shadow-3xl">
+               <div className="p-6 md:p-8 bg-dark-950 border border-dark-800 rounded-3xl flex flex-col gap-4 group hover:border-green-500/30 transition-all">
                   <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center text-green-500"><CheckCircle className="w-7 h-7"/></div>
                   <div>
                     <span className="text-[10px] text-dark-500 font-black uppercase tracking-[0.3em] block mb-1">Hub Status</span>
@@ -247,7 +246,7 @@ const Landing = () => {
                     <span className="text-xl font-black text-white">42 UNITS</span>
                   </div>
                </div>
-               <div className="p-10 bg-dark-950/60 col-span-2 rounded-[32px] border border-dark-800 flex flex-col items-center justify-center gap-6">
+               <div className="p-8 md:p-10 bg-dark-950/60 sm:col-span-2 rounded-[32px] border border-dark-800 flex flex-col items-center justify-center gap-6">
                   <div className="w-full space-y-3">
                     <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-dark-500">
                       <span>Global Sync Rate</span>
@@ -270,7 +269,7 @@ const Landing = () => {
       </section>
 
       {/* Testimonials section */}
-      <section className="py-40 px-8 md:px-16 bg-dark-900/30 relative overflow-hidden">
+      <section className="py-24 md:py-40 px-6 md:px-16 bg-dark-900/30 relative overflow-hidden">
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -288,7 +287,7 @@ const Landing = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-4xl lg:text-5xl font-black italic text-white leading-[1.4] mb-12 tracking-tight"
+            className="text-2xl md:text-5xl font-black italic text-white leading-[1.4] mb-8 md:mb-12 tracking-tight px-4"
           >
             "Switching to SkyLogist AI reduced our operational costs by 64% within the first quarter. The autonomous routing logic is simply unrivaled."
           </motion.h3>
@@ -308,25 +307,25 @@ const Landing = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-40 px-8 md:px-16 relative">
+      <section className="py-24 md:py-40 px-6 md:px-16 relative">
          <motion.div 
            initial={{ opacity: 0, scale: 0.95 }}
            whileInView={{ opacity: 1, scale: 1 }}
            viewport={{ once: true }}
-           className="relative premium-card bg-primary-600/95 p-16 md:p-32 text-center space-y-12 overflow-hidden rounded-[60px] shadow-3xl shadow-primary-900/50 border-white/10"
+           className="relative premium-card bg-primary-600/95 p-10 md:p-32 text-center space-y-10 md:space-y-12 overflow-hidden rounded-[40px] md:rounded-[60px] shadow-3xl shadow-primary-900/50 border-white/10"
          >
             <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 blur-[100px] rounded-full animate-float"></div>
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-black/20 blur-[100px] rounded-full animate-float" style={{ animationDelay: '-3s' }}></div>
             
-            <h2 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tight leading-none">Initialize Your <br/> Mission Hub.</h2>
-            <p className="text-primary-100 text-xl md:text-2xl max-w-3xl mx-auto font-medium opacity-90 leading-relaxed">
+            <h2 className="text-4xl md:text-8xl font-black text-white uppercase tracking-tight leading-none mb-6">Initialize Your <br className="hidden md:block"/> Mission Hub.</h2>
+            <p className="text-primary-100 text-lg md:text-2xl max-w-3xl mx-auto font-medium opacity-90 leading-relaxed px-4">
               Join 500+ logistics giants already leveraging autonomous flight signatures today.
             </p>
             
             <div className="pt-8">
               <motion.div whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.95 }}>
-                <Link to="/register" className="bg-white text-primary-600 hover:bg-dark-50 transition-all py-6 px-16 rounded-[24px] text-xl font-black shadow-2xl inline-flex items-center gap-4 group">
-                  Initialize Protocol <ArrowRight className="w-7 h-7 group-hover:translate-x-3 transition-transform" />
+                <Link to="/register" className="bg-white text-primary-600 hover:bg-dark-50 transition-all py-5 md:py-6 px-10 md:px-16 rounded-[24px] text-lg md:text-xl font-black shadow-2xl inline-flex items-center gap-4 group">
+                  Initialize Protocol <ArrowRight className="w-6 h-6 md:w-7 md:h-7 group-hover:translate-x-3 transition-transform" />
                 </Link>
               </motion.div>
             </div>

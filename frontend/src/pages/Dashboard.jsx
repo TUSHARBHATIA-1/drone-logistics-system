@@ -96,11 +96,11 @@ const Dashboard = () => {
     return (
       <div className="max-w-[1600px] mx-auto space-y-12">
       {/* Header Section */}
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+      <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 md:gap-12">
         <motion.div 
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
-          className="space-y-4"
+          className="space-y-4 md:space-y-6"
         >
           <div className="flex items-center gap-4">
             <div className="flex -space-x-3">
@@ -110,24 +110,24 @@ const Dashboard = () => {
                 </div>
               ))}
             </div>
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary-500 animate-pulse">Live Telemetry Synchronized</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] md:tracking-[0.4em] text-primary-500 animate-pulse">Live Telemetry Synchronized</p>
           </div>
-          <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tight leading-none group">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight leading-none group">
             Ops <span className="text-primary-500 group-hover:italic transition-all">Command</span> Center
           </h1>
-          <p className="text-dark-400 font-medium text-lg leading-relaxed max-w-2xl">Visualizing autonomous industrial logistics across 24 global mission sectors.</p>
+          <p className="text-dark-400 font-medium text-base md:text-lg leading-relaxed max-w-2xl">Visualizing autonomous industrial logistics across 24 global mission sectors.</p>
         </motion.div>
 
         <motion.div 
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex flex-wrap items-center gap-4"
+          className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto"
         >
           <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleSimulateEmergency}
-            className="group flex items-center gap-3 px-8 py-4 rounded-2xl bg-red-600/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest transition-all hover:bg-red-500/20 shadow-xl shadow-red-900/5"
+            className="group flex items-center justify-center gap-3 px-6 md:px-8 py-4 rounded-2xl bg-red-600/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest transition-all hover:bg-red-500/20 shadow-xl shadow-red-900/5"
           >
             <ShieldAlert className="w-4 h-4 group-hover:rotate-12 transition-transform" />
             Emergency Protocol
@@ -137,14 +137,14 @@ const Dashboard = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate('/assignments')}
-            className="btn-primary flex items-center gap-3 px-8 py-4 rounded-2xl shadow-primary-600/20"
+            className="btn-primary flex items-center justify-center gap-3 px-6 md:px-8 py-4 rounded-2xl shadow-primary-600/20"
           >
             <Plus className="w-5 h-5" /> Initialize Mission
           </motion.button>
         </motion.div>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10">
         {/* Main Stats Cluster */}
         <motion.div 
           variants={containerVariants}
@@ -162,11 +162,11 @@ const Dashboard = () => {
               key={i}
               variants={cardVariants}
               whileHover="hover"
-              className={`premium-card p-10 group cursor-pointer ${stat.glow}`}
+              className={`premium-card p-8 md:p-10 group cursor-pointer ${stat.glow}`}
             >
-              <div className="flex justify-between items-start mb-10">
-                <div className={`p-4 rounded-2xl bg-dark-900 border border-dark-800 group-hover:border-primary-500/30 transition-all ${stat.color}`}>
-                  <stat.icon className="w-6 h-6" />
+              <div className="flex justify-between items-start mb-8 md:mb-10">
+                <div className={`p-3 md:p-4 rounded-2xl bg-dark-900 border border-dark-800 group-hover:border-primary-500/30 transition-all ${stat.color}`}>
+                  <stat.icon className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
                 <div className="flex items-center gap-2 bg-dark-950 px-3 py-1.5 rounded-full border border-dark-900 shadow-inner">
                   <ArrowUpRight className="w-3.5 h-3.5 text-primary-500" />
@@ -174,7 +174,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <p className="text-[10px] text-dark-500 font-black uppercase tracking-[0.3em] mb-2">{stat.label}</p>
-              <h3 className="text-5xl font-black text-white tracking-tighter">{stat.val}</h3>
+              <h3 className="text-4xl md:text-5xl font-black text-white tracking-tighter">{stat.val}</h3>
               <div className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </motion.div>
           ))}
@@ -183,7 +183,7 @@ const Dashboard = () => {
           <motion.div 
             variants={cardVariants}
             whileHover="hover"
-            className="md:col-span-2 premium-card p-12 bg-dark-900/10 relative h-[450px] flex flex-col justify-end group overflow-hidden"
+            className="md:col-span-2 premium-card p-8 md:p-12 bg-dark-900/10 relative h-[400px] md:h-[450px] flex flex-col justify-end group overflow-hidden"
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(2,6,23,0.8)_100%)] z-10"></div>
             <div className="absolute inset-0 z-0 opacity-40 group-hover:opacity-60 transition-opacity">
@@ -200,12 +200,12 @@ const Dashboard = () => {
             </div>
 
             <div className="relative z-20 space-y-6">
-              <div className="flex items-center gap-6">
-                 <h4 className="text-3xl font-black text-white uppercase tracking-tight">Global Logistics Topology</h4>
-                 <div className="h-px bg-dark-800 flex-1"></div>
-                 <span className="badge badge-primary">Dynamic Mesh</span>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+                 <h4 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">Global Logistics Topology</h4>
+                 <div className="h-px bg-dark-800 flex-1 hidden sm:block"></div>
+                 <span className="badge badge-primary w-fit">Dynamic Mesh</span>
               </div>
-              <p className="text-dark-400 font-medium max-w-xl text-lg leading-relaxed">
+              <p className="text-dark-400 font-medium max-w-xl text-base md:text-lg leading-relaxed">
                 Visualizing high-density autonomous traffic corridors across the planetary sector 
                 map in real-time. System efficiency currently at <span className="text-green-500 font-black">94.2%</span>.
               </p>

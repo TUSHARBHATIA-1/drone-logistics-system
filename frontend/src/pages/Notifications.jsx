@@ -63,21 +63,21 @@ const Notifications = () => {
           notifications.map((notif) => (
             <div 
               key={notif?._id || Math.random()} 
-              className={`glass-card p-6 flex gap-6 group transition-all duration-300 ${!notif?.isRead ? 'border-primary-500/30 bg-primary-500/5 shadow-lg shadow-primary-500/5' : 'hover:border-dark-700'}`}
+              className={`glass-card p-5 md:p-6 flex flex-col sm:flex-row gap-5 md:gap-6 group transition-all duration-300 ${!notif?.isRead ? 'border-primary-500/30 bg-primary-500/5 shadow-lg shadow-primary-500/5' : 'hover:border-dark-700'}`}
             >
-              <div className={`w-14 h-14 rounded-2xl bg-dark-950 border border-dark-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
+              <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-dark-950 border border-dark-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
                 {getIcon(notif?.type)}
               </div>
               
               <div className="flex-1 space-y-3">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-0">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-lg text-white font-outfit font-bold">{notif?.title || 'System Notification'}</h3>
-                    <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${getBadgeStyles(notif?.type)}`}>
+                    <h3 className="text-base md:text-lg text-white font-outfit font-bold">{notif?.title || 'System Notification'}</h3>
+                    <span className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${getBadgeStyles(notif?.type)}`}>
                       {notif?.type || 'Update'}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between md:justify-end gap-2">
                     <span className="flex items-center gap-1.5 text-[10px] text-dark-600 font-bold uppercase tracking-wider">
                       <Clock className="w-3 h-3" /> {new Date(notif?.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
@@ -92,9 +92,9 @@ const Notifications = () => {
                   </div>
                 </div>
                 
-                <p className="text-dark-300 leading-relaxed font-medium">{notif?.message}</p>
+                <p className="text-dark-300 text-sm md:text-base leading-relaxed font-medium">{notif?.message}</p>
                 
-                <div className="flex gap-4 pt-3 items-center">
+                <div className="flex flex-wrap gap-4 pt-3 items-center">
                   {notif?.assignment && (
                     <button type="button" className="flex items-center gap-2 text-[10px] font-black uppercase text-primary-500 hover:text-primary-400 tracking-tighter transition-colors group/btn">
                       <Package className="w-3.5 h-3.5" /> Track Mission <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />

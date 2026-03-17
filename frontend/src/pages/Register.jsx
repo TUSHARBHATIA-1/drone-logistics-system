@@ -59,7 +59,7 @@ const Register = () => {
 
         try {
             // Using absolute URL as provided in previous state, but ensuring it's the correct path
-            const res = await axios.post("http://localhost:5000/api/auth/register", formData);
+            const res = await axios.post("/api/auth/register", formData);
             console.log("REGISTRATION SUCCESS", res.data);
             login(res.data.token, res.data.user);
             navigate("/dashboard");
@@ -84,8 +84,8 @@ const Register = () => {
                 className="w-full max-w-2xl relative z-50 pointer-events-auto"
             >
                 <div className="premium-card p-10 backdrop-blur-xl relative z-50">
-                    <h2 className="text-3xl text-center font-bold text-white mb-6 uppercase tracking-wider">
-                        Register Account
+                    <h2 className="text-2xl md:text-3xl text-center font-black text-white mb-8 md:mb-10 uppercase tracking-tight">
+                        Register <span className="text-primary-500">Account</span>
                     </h2>
 
                     {error && (
@@ -185,7 +185,7 @@ const Register = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="btn-primary col-span-2 py-4 relative z-50 cursor-pointer"
+                            className="btn-primary col-span-2 py-5 md:py-6 relative z-50 cursor-pointer rounded-2xl md:rounded-[24px]"
                         >
                             {loading ? <Loader2 className="animate-spin mx-auto w-6 h-6" /> : "Register"}
                         </button>
