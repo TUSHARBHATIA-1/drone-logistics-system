@@ -1,21 +1,24 @@
-import api from './api';
+import API from './api';
 
 export const getNotifications = async () => {
-  const { data } = await api.get('/notifications');
-  return data.data;
+  const token = localStorage.getItem('token');
+  if (!token) return { data: [] };
+
+  const res = await API.get('/notifications');
+  return res.data;
 };
 
 export const markAsRead = async (id) => {
-  const { data } = await api.put(`/notifications/${id}/read`);
-  return data;
+  const res = await API.put(`/notifications/${id}/read`);
+  return res.data;
 };
 
 export const markAllAsRead = async () => {
-  const { data } = await api.put('/notifications/read-all');
-  return data;
+  const res = await API.put('/notifications/read-all');
+  return res.data;
 };
 
 export const deleteNotification = async (id) => {
-  const { data } = await api.delete(`/notifications/${id}`);
-  return data;
+  const res = await API.delete(`/notifications/${id}`);
+  return res.data;
 };

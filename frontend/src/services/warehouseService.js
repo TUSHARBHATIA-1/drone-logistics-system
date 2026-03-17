@@ -1,11 +1,11 @@
-import api from './api';
+import API from './api';
 
 export const getWarehouses = async () => {
-  const { data } = await api.get('/warehouses');
-  return data.data;
+  const res = await API.get('/warehouses');
+  return res.data;
 };
 
-export const addWarehouse = async (warehouseData) => {
-  const { data } = await api.post('/warehouses', warehouseData);
-  return data.data;
+export const addWarehouse = async (data) => {
+  const res = await API.post('/warehouses', data);
+  return res.data;
 };

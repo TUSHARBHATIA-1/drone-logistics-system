@@ -1,21 +1,21 @@
-import api from './api';
+import API from './api';
 
-export const createAssignment = async (assignmentData) => {
-  const { data } = await api.post('/assignments', assignmentData);
-  return data;
+export const createAssignment = async (data) => {
+  const res = await API.post('/assignments', data);
+  return res.data;
 };
 
 export const getAssignments = async () => {
-  const { data } = await api.get('/assignments');
-  return data.data;
+  const res = await API.get('/assignments');
+  return res.data;
 };
 
-export const updateAssignment = async (id, updateData) => {
-  const { data } = await api.put(`/assignments/${id}`, updateData);
-  return data.data;
+export const updateAssignment = async (id, data) => {
+  const res = await API.put(`/assignments/${id}`, data);
+  return res.data;
 };
 
 export const cancelAssignment = async (id) => {
-  const { data } = await api.delete(`/assignments/${id}`);
-  return data;
+  const res = await API.delete(`/assignments/${id}`);
+  return res.data;
 };

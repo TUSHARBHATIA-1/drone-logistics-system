@@ -1,63 +1,44 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getNotifications, markAsRead as markAsReadService, markAllAsRead as markAllAsReadService, deleteNotification as deleteNotificationService } from '../services/notificationService';
 
 const NotificationContext = createContext();
 
 export const useNotifications = () => useContext(NotificationContext);
 
 export const NotificationProvider = ({ children }) => {
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState(() => {
+    const saved = localStorage.getItem('notifications');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  const fetchNotifications = async () => {
-    try {
-      const data = await getNotifications();
-      setNotifications(data);
-      setUnreadCount(data.filter(n => !n.isRead).length);
-    } catch (error) {
-      console.error('Failed to fetch notifications', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchNotifications();
-    // Poll every 30 seconds for new alerts
-    const interval = setInterval(fetchNotifications, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    localStorage.setItem('notifications', JSON.stringify(notifications));
+    setUnreadCount(notifications.filter(n => !n.isRead).length);
+  }, [notifications]);
 
-  const markAsRead = async (id) => {
-    try {
-      await markAsReadService(id);
-      setNotifications(prev => prev.map(n => n._id === id ? { ...n, isRead: true } : n));
-      setUnreadCount(prev => Math.max(0, prev - 1));
-    } catch (error) {
-      console.error('Failed to mark notification as read', error);
-    }
+  const addNotification = (title, message, type = 'Info') => {
+    const newNotif = {
+      _id: Date.now().toString(),
+      title,
+      message,
+      type,
+      isRead: false,
+      createdAt: new Date().toISOString()
+    };
+    setNotifications(prev => [newNotif, ...prev]);
   };
 
-  const markAllAsRead = async () => {
-    try {
-      await markAllAsReadService();
-      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-      setUnreadCount(0);
-    } catch (error) {
-      console.error('Failed to mark all as read', error);
-    }
+  const markAsRead = (id) => {
+    setNotifications(prev => prev.map(n => n._id === id ? { ...n, isRead: true } : n));
   };
 
-  const deleteNotification = async (id) => {
-    try {
-      await deleteNotificationService(id);
-      const wasUnread = !notifications.find(n => n._id === id)?.isRead;
-      setNotifications(prev => prev.filter(n => n._id !== id));
-      if (wasUnread) setUnreadCount(prev => Math.max(0, prev - 1));
-    } catch (error) {
-      console.error('Failed to delete notification', error);
-    }
+  const markAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+  };
+
+  const deleteNotification = (id) => {
+    setNotifications(prev => prev.filter(n => n._id !== id));
   };
 
   return (
@@ -68,7 +49,8 @@ export const NotificationProvider = ({ children }) => {
       markAsRead, 
       markAllAsRead, 
       deleteNotification,
-      refresh: fetchNotifications 
+      addNotification,
+      refresh: () => {} // Mock refresh
     }}>
       {children}
     </NotificationContext.Provider>

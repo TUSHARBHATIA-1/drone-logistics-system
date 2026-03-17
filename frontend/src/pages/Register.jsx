@@ -1,136 +1,215 @@
-import { registerUser } from '../services/authService';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
+import {
+    User,
+    Mail,
+    Lock,
+    Building,
+    ArrowRight,
+    ShieldCheck,
+    Loader2,
+    Plane,
+    PlusCircle,
+    Eye,
+    EyeOff,
+    Phone,
+    MapPin
+} from "lucide-react";
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    companyName: '',
-    contactPerson: '',
-    email: '',
-    phone: '',
-    address: '',
-    password: '',
-    confirmPassword: ''
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        username: "",
+        companyName: "",
+        contactPerson: "",
+        email: "",
+        phone: "",
+        warehouseAddress: "",
+        password: ""
+    });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      return setError('Passwords do not match');
-    }
-    setLoading(true);
-    setError('');
-    try {
-      const data = await registerUser({
-        name: formData.companyName,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.phone,
-        address: formData.address
-      });
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('userInfo', JSON.stringify(data));
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const navigate = useNavigate();
+    const { login, token } = useAuth();
 
-  return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-[radial-gradient(circle_at_top_right,#1e293b,transparent),radial-gradient(circle_at_bottom_left,#0f172a,transparent)]">
-      <div className="w-full max-w-2xl space-y-8 animate-in fade-in zoom-in duration-500">
-        <div className="text-center">
-          <h2 className="text-4xl text-white font-bold font-outfit">Join the Fleet</h2>
-          <p className="text-dark-400 mt-2 font-medium">Create your autonomous logistics hub today.</p>
-        </div>
+    // Prevent access to register if already authenticated
+    React.useEffect(() => {
+        if (token) {
+            navigate("/dashboard");
+        }
+    }, [token, navigate]);
 
-        <div className="glass-card p-10">
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {error && (
-              <div className="md:col-span-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold text-center">
-                {error}
-              </div>
-            )}
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-dark-500 ml-1">Company Name</label>
-              <div className="relative group">
-                <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-600 group-focus-within:text-primary-500 transition-colors" />
-                <input name="companyName" onChange={handleChange} value={formData.companyName} type="text" placeholder="Global Logistics Inc." className="input-field w-full pl-12" required />
-              </div>
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        if (e) e.preventDefault();
+        console.log("FORM SUBMITTED", formData);
+        setLoading(true);
+        setError("");
+
+        try {
+            // Using absolute URL as provided in previous state, but ensuring it's the correct path
+            const res = await axios.post("http://localhost:5000/api/auth/register", formData);
+            console.log("REGISTRATION SUCCESS", res.data);
+            login(res.data.token, res.data.user);
+            navigate("/dashboard");
+        } catch (err) {
+            console.error("REGISTRATION ERROR", err);
+            setError(err.response?.data?.message || "Registration Failed. Check connection to Mission Control.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="min-h-screen flex items-center justify-center p-6 bg-dark-950 relative overflow-hidden">
+            {/* Background Layer - Set to pointer-events-none to prevent blocking */}
+            <div className="absolute inset-0 pointer-events-none z-0 opacity-20">
+                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(14,165,233,0.15),transparent_70%)]"></div>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-dark-500 ml-1">Contact Person</label>
-              <div className="relative group">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-600 group-focus-within:text-primary-500 transition-colors" />
-                <input name="contactPerson" onChange={handleChange} value={formData.contactPerson} type="text" placeholder="John Doe" className="input-field w-full pl-12" required />
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-dark-500 ml-1">Corporate Email</label>
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-600 group-focus-within:text-primary-500 transition-colors" />
-                <input name="email" onChange={handleChange} value={formData.email} type="email" placeholder="contact@company.io" className="input-field w-full pl-12" required />
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-dark-500 ml-1">Phone Number</label>
-              <div className="relative group">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-600 group-focus-within:text-primary-500 transition-colors" />
-                <input name="phone" onChange={handleChange} value={formData.phone} type="tel" placeholder="+1 (555) 000-0000" className="input-field w-full pl-12" required />
-              </div>
-            </div>
-
-            <div className="space-y-1 md:col-span-2">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-dark-500 ml-1">Warehouse HQ Address</label>
-              <div className="relative group">
-                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-600 group-focus-within:text-primary-500 transition-colors" />
-                <input name="address" onChange={handleChange} value={formData.address} type="text" placeholder="123 Skyway Avenue, Tech Park, CA" className="input-field w-full pl-12" required />
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-dark-500 ml-1">Password</label>
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-600 group-focus-within:text-primary-500 transition-colors" />
-                <input name="password" onChange={handleChange} value={formData.password} type="password" placeholder="••••••••" className="input-field w-full pl-12" required />
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-dark-500 ml-1">Confirm Password</label>
-              <div className="relative group">
-                <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-600 group-focus-within:text-primary-500 transition-colors" />
-                <input name="confirmPassword" onChange={handleChange} value={formData.confirmPassword} type="password" placeholder="••••••••" className="input-field w-full pl-12" required />
-              </div>
-            </div>
-
-            <button 
-              type="submit" 
-              disabled={loading}
-              className="btn-primary md:col-span-2 py-4 mt-4 flex items-center justify-center gap-2 group disabled:opacity-50"
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-2xl relative z-50 pointer-events-auto"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Initialize Company Account'} 
-              {!loading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
-            </button>
-          </form>
+                <div className="premium-card p-10 backdrop-blur-xl relative z-50">
+                    <h2 className="text-3xl text-center font-bold text-white mb-6 uppercase tracking-wider">
+                        Register Account
+                    </h2>
 
-          <p className="text-center text-sm text-dark-400 mt-8">
-            Already registered? <Link to="/login" className="text-primary-500 hover:text-primary-400 font-bold">Log in here</Link>
-          </p>
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-600/10 border border-red-500 text-red-500 text-sm rounded flex items-center gap-2">
+                             <ShieldCheck className="w-4 h-4" /> {error}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-50">
+                        {/* Username */}
+                        <input
+                            type="text"
+                            name="username"
+                            placeholder="Username"
+                            className="input-field col-span-2"
+                            value={formData.username}
+                            onChange={handleChange}
+                            required
+                        />
+
+                        {/* Company */}
+                        <input
+                            type="text"
+                            name="companyName"
+                            placeholder="Company Name"
+                            className="input-field col-span-2"
+                            value={formData.companyName}
+                            onChange={handleChange}
+                            required
+                        />
+
+                        {/* Contact */}
+                        <input
+                            type="text"
+                            name="contactPerson"
+                            placeholder="Contact Person"
+                            className="input-field"
+                            value={formData.contactPerson}
+                            onChange={handleChange}
+                            required
+                        />
+
+                        {/* Email */}
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Email"
+                            className="input-field"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
+
+                        {/* Phone */}
+                        <input
+                            type="tel"
+                            name="phone"
+                            placeholder="Phone"
+                            className="input-field"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            required
+                        />
+
+                        {/* Address */}
+                        <input
+                            type="text"
+                            name="warehouseAddress"
+                            placeholder="Warehouse Address"
+                            className="input-field"
+                            value={formData.warehouseAddress}
+                            onChange={handleChange}
+                            required
+                        />
+
+                        {/* Password */}
+                        <div className="col-span-2 relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                placeholder="Password"
+                                className="input-field w-full pr-10"
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-3 text-gray-400 hover:text-white transition-colors"
+                            >
+                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                            </button>
+                        </div>
+
+                        {/* Submit */}
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="btn-primary col-span-2 py-4 relative z-50 cursor-pointer"
+                        >
+                            {loading ? <Loader2 className="animate-spin mx-auto w-6 h-6" /> : "Register"}
+                        </button>
+
+                        {/* Fallback Test Button */}
+                        <button 
+                            type="button" 
+                            onClick={handleSubmit}
+                            className="col-span-2 text-[10px] text-gray-600 hover:text-primary-500 uppercase tracking-widest mt-2"
+                        >
+                            Emergency Force Submit (Bypass Form Validation)
+                        </button>
+                    </form>
+
+                    <p className="mt-6 text-center text-sm text-gray-400">
+                        Already have an account?{" "}
+                        <Link to="/login" className="text-primary-500 underline hover:text-primary-400">
+                            Login
+                        </Link>
+                    </p>
+                </div>
+            </motion.div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Register;

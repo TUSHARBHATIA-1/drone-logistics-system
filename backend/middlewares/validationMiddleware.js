@@ -12,19 +12,19 @@ const validate = (req, res, next) => {
     next();
 };
 
-// Registration Validation
 const registerValidation = [
-    body('username').trim().notEmpty().withMessage('Username is required').isLength({ min: 3 }).withMessage('Username must be at least 3 characters'),
     body('companyName').trim().notEmpty().withMessage('Company name is required'),
-    body('phone').trim().notEmpty().withMessage('Phone number is required').isMobilePhone().withMessage('Invalid phone number format'),
-    body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/).withMessage('Password must include uppercase, lowercase, and a number'),
+    body('contactPerson').trim().notEmpty().withMessage('Contact person is required'),
+    body('email').trim().isEmail().withMessage('Please provide a valid corporate email'),
+    body('phone').trim().notEmpty().withMessage('Phone number is required'),
+    body('warehouseAddress').trim().notEmpty().withMessage('Warehouse address is required'),
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
     validate
 ];
 
 // Login Validation
 const loginValidation = [
-    body('username').trim().notEmpty().withMessage('Username is required'),
+    body('email').trim().isEmail().withMessage('Valid email is required'),
     body('password').notEmpty().withMessage('Password is required'),
     validate
 ];

@@ -16,7 +16,7 @@ const EmergencyOverlay = ({ isOpen, onClose, data }) => {
             </div>
             <h2 className="text-lg font-outfit font-black text-white uppercase tracking-tighter">Emergency Protocol Active</h2>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-white/20 rounded-lg transition-colors">
+          <button type="button" onClick={onClose} className="p-1 hover:bg-white/20 rounded-lg transition-colors">
             <X className="w-5 h-5 text-white" />
           </button>
         </div>
@@ -60,6 +60,7 @@ const EmergencyOverlay = ({ isOpen, onClose, data }) => {
           </div>
 
           <button 
+            type="button"
             onClick={onClose}
             className="w-full py-4 bg-dark-900 hover:bg-dark-800 border border-dark-800 text-white text-xs font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95"
           >

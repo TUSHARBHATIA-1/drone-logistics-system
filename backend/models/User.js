@@ -2,40 +2,37 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
-    companyName: {
-        type: String,
-        required: [true, 'Please add a company name'],
-        trim: true
-    },
-    username: {
-        type: String,
-        required: [true, 'Please add a username'],
-        unique: true,
-        trim: true
-    },
-    phone: {
-        type: String,
-        required: [true, 'Please add a phone number']
-    },
-    address: {
-        type: String,
-        required: [true, 'Please add a business address']
-    },
-    warehouseAddress: {
-        type: String,
-        required: [true, 'Please add a primary warehouse address']
-    },
-    password: {
-        type: String,
-        required: [true, 'Please add a password'],
-        minlength: 8,
-        select: false // Don't return password by default
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-});
+  username: {
+    type: String,
+    required: [true, 'Please add a username'],
+    unique: true,
+    trim: true
+  },
+  name: {
+    type: String,
+    required: [true, 'Please add a name']
+  },
+  contactPerson: {
+    type: String
+  },
+  email: {
+    type: String,
+    required: [true, 'Please add an email'],
+    unique: true
+  },
+  phone: {
+    type: String
+  },
+  warehouseAddress: {
+    type: String
+  },
+  password: {
+    type: String,
+    required: [true, 'Please add a password'],
+    minlength: 6,
+    select: false
+  }
+}, { timestamps: true });
 
 // Encrypt password using bcrypt
 userSchema.pre('save', async function (next) {

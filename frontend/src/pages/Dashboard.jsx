@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Activity, 
   Battery, 
@@ -12,129 +12,309 @@ import {
   ClipboardList,
   Plus,
   Store,
-  User
+  User,
+  ShieldAlert,
+  ArrowUpRight,
+  Zap,
+  Globe,
+  Wrench
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldAlert } from 'lucide-react';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [statsData, setStatsData] = useState({
+    activeDrones: 42,
+    deliveriesToday: 158,
+    fleetHealth: 99.4,
+    marketValue: 482500
+  });
+
+  const [notifications] = useState([
+    { id: 1, type: 'status', msg: 'HULL-01-X vector stabilized at 12k altitude' },
+    { id: 2, type: 'alert', msg: 'Atmospheric turbulence detected in Sector 7' },
+    { id: 3, type: 'success', msg: 'Mission-Raider completed clearance protocols' }
+  ]);
+
+  useEffect(() => {
+    console.log("Dashboard Loaded");
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSimulateEmergency = async () => {
     try {
       const response = await axios.post('/api/emergency/trigger', {
-        droneId: 'd2', // Raven-X
+        droneId: 'd2',
         triggerType: 'System-wide Sensor Failure',
-        currentLocationID: 4 // Residential Park
+        currentLocationID: 4
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       
       if (window.triggerEmergencyUI) {
         window.triggerEmergencyUI(response.data);
-      } else {
-        alert(`EMERGENCY: Landing at ${response.data.nearestHub}`);
       }
     } catch (error) {
        console.error('Sim failed', error);
     }
   };
 
-  const stats = [
-    { name: 'Total Drones', value: '24', icon: Plane, trend: '4 New this month', color: 'text-blue-400' },
-    { name: 'Active Deliveries', value: '18', icon: Activity, trend: '88% efficiency', color: 'text-green-400' },
-    { name: 'Completed Deliveries', value: '1,240', icon: CheckCircle, trend: '+12% from last week', color: 'text-purple-400' },
-    { name: 'Drones Under Repair', value: '3', icon: AlertTriangle, trend: '2 back by tomorrow', color: 'text-red-400' },
-  ];
+  const cardVariants = {
+    initial: { opacity: 0, scale: 0.9, y: 20 },
+    animate: { opacity: 1, scale: 1, y: 0 },
+    hover: { 
+      y: -10, 
+      scale: 1.02,
+      transition: { duration: 0.3, ease: "easeOut" }
+    }
+  };
 
-  const quickActions = [
-    { name: 'View Assignments', icon: ClipboardList, path: '/assignments', color: 'bg-blue-600' },
-    { name: 'New Assignment', icon: Plus, path: '/assignments', color: 'bg-primary-600' },
-    { name: 'Marketplace', icon: Store, path: '/marketplace', color: 'bg-purple-600' },
-    { name: 'Profile', icon: User, path: '/profile', color: 'bg-dark-800' },
-  ];
+  const containerVariants = {
+    animate: {
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
-  return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl text-white">Operations Center</h2>
-          <p className="text-dark-400 mt-1">Real-time fleet monitoring and quick controls.</p>
-        </div>
-        <div className="flex gap-4">
-          <button 
-            onClick={handleSimulateEmergency}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-bold transition-all hover:bg-red-500/20 active:scale-95"
-          >
-            <ShieldAlert className="w-4 h-4" /> Simulate E-Landing
-          </button>
-          {quickActions.map((action) => (
-            <button 
-              key={action.name}
-              onClick={() => navigate(action.path)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-semibold transition-all active:scale-95 shadow-lg group ${action.color} ${action.color === 'bg-dark-800' ? 'border border-dark-700 hover:bg-dark-700' : 'hover:brightness-110 shadow-black/20'}`}
-            >
-              <action.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              {action.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <div key={stat.name} className="glass-card p-6 group hover:border-primary-500/30 transition-all border-dark-800/50">
-            <div className="flex items-center justify-between mb-4">
-              <div className={`p-3 rounded-xl bg-dark-950 border border-dark-800 ${stat.color} group-hover:scale-110 transition-transform`}>
-                <stat.icon className="w-6 h-6" />
-              </div>
-              <span className="text-[10px] font-bold text-dark-500 uppercase tracking-widest">{stat.trend}</span>
-            </div>
-            <p className="text-sm font-medium text-dark-400 font-inter">{stat.name}</p>
-            <h3 className="text-3xl mt-1 text-white font-outfit font-bold">{stat.value}</h3>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 glass-card p-8 border-dark-800/50">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-xl">Network Topology</h3>
-            <button className="text-primary-400 text-sm hover:underline flex items-center gap-1">
-              Analyze Routes <ExternalLink className="w-3 h-3" />
-            </button>
-          </div>
-          <div className="aspect-[16/9] bg-dark-950 rounded-2xl border border-dark-800 flex items-center justify-center relative overflow-hidden">
-             <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:24px_24px]"></div>
-             <div className="text-dark-500 text-center z-10">
-               <MapPin className="w-12 h-12 mx-auto mb-2 opacity-20" />
-               <p className="font-outfit italic tracking-wide">Live Feed Synchronizing...</p>
-             </div>
-          </div>
-        </div>
-
-        <div className="glass-card p-8 border-dark-800/50">
-          <h3 className="text-xl mb-6">System Health</h3>
-          <div className="space-y-6">
-            {[
-              { label: 'Cloud Optimizer', status: 'Online', color: 'text-green-400' },
-              { label: 'Sub-process Engine', status: 'Running', color: 'text-blue-400' },
-              { label: 'Fleet Sync', status: 'Active', color: 'text-primary-400' },
-            ].map((system) => (
-              <div key={system.label} className="p-4 rounded-xl bg-dark-950/50 border border-dark-800 flex items-center justify-between group hover:border-primary-500/20 transition-all">
-                <span className="text-sm text-dark-300 font-medium">{system.label}</span>
-                <span className={`text-[10px] font-black uppercase tracking-tighter ${system.color}`}>{system.status}</span>
-              </div>
-            ))}
-            <div className="pt-4 mt-4 border-t border-dark-800 text-xs text-dark-500 italic">
-              All systems operational. Signal quality: 98%
-            </div>
-          </div>
-        </div>
-      </div>
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center min-h-[600px] space-y-6">
+      <motion.div 
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+        className="w-16 h-16 border-4 border-primary-500/20 border-t-primary-500 rounded-full"
+      ></motion.div>
+      <p className="font-black uppercase tracking-[0.4em] text-dark-500 text-xs animate-pulse">Initializing Ops Matrix...</p>
     </div>
   );
+
+  try {
+    return (
+      <div className="max-w-[1600px] mx-auto space-y-12">
+      {/* Header Section */}
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+        <motion.div 
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="space-y-4"
+        >
+          <div className="flex items-center gap-4">
+            <div className="flex -space-x-3">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="w-8 h-8 rounded-full border-4 border-dark-950 bg-primary-600 flex items-center justify-center text-[10px] font-black group hover:z-10 hover:scale-110 transition-all cursor-crosshair">
+                   <Activity className="w-3.5 h-3.5 text-white" />
+                </div>
+              ))}
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary-500 animate-pulse">Live Telemetry Synchronized</p>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tight leading-none group">
+            Ops <span className="text-primary-500 group-hover:italic transition-all">Command</span> Center
+          </h1>
+          <p className="text-dark-400 font-medium text-lg leading-relaxed max-w-2xl">Visualizing autonomous industrial logistics across 24 global mission sectors.</p>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex flex-wrap items-center gap-4"
+        >
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleSimulateEmergency}
+            className="group flex items-center gap-3 px-8 py-4 rounded-2xl bg-red-600/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest transition-all hover:bg-red-500/20 shadow-xl shadow-red-900/5"
+          >
+            <ShieldAlert className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+            Emergency Protocol
+          </motion.button>
+          
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/assignments')}
+            className="btn-primary flex items-center gap-3 px-8 py-4 rounded-2xl shadow-primary-600/20"
+          >
+            <Plus className="w-5 h-5" /> Initialize Mission
+          </motion.button>
+        </motion.div>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Main Stats Cluster */}
+        <motion.div 
+          variants={containerVariants}
+          initial="initial"
+          animate="animate"
+          className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8"
+        >
+          {[
+            { label: 'Active Hulls', val: statsData.activeDrones, trend: '+4', icon: Plane, color: 'text-primary-500', glow: 'shadow-primary-600/10' },
+            { label: 'Network Yield', val: statsData.deliveriesToday, trend: '+12.5%', icon: Store, color: 'text-green-500', glow: 'shadow-green-600/10' },
+            { label: 'Core Integrity', val: `${statsData.fleetHealth}%`, trend: 'STABLE', icon: ShieldAlert, color: 'text-orange-500', glow: 'shadow-orange-600/10' },
+            { label: 'Orbital Value', val: `$${(statsData.marketValue/1000).toFixed(1)}k`, trend: '+2.1k', icon: Zap, color: 'text-blue-500', glow: 'shadow-blue-600/10' },
+          ].map((stat, i) => (
+            <motion.div
+              key={i}
+              variants={cardVariants}
+              whileHover="hover"
+              className={`premium-card p-10 group cursor-pointer ${stat.glow}`}
+            >
+              <div className="flex justify-between items-start mb-10">
+                <div className={`p-4 rounded-2xl bg-dark-900 border border-dark-800 group-hover:border-primary-500/30 transition-all ${stat.color}`}>
+                  <stat.icon className="w-6 h-6" />
+                </div>
+                <div className="flex items-center gap-2 bg-dark-950 px-3 py-1.5 rounded-full border border-dark-900 shadow-inner">
+                  <ArrowUpRight className="w-3.5 h-3.5 text-primary-500" />
+                  <span className="text-[10px] font-black text-white tracking-widest">{stat.trend}</span>
+                </div>
+              </div>
+              <p className="text-[10px] text-dark-500 font-black uppercase tracking-[0.3em] mb-2">{stat.label}</p>
+              <h3 className="text-5xl font-black text-white tracking-tighter">{stat.val}</h3>
+              <div className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </motion.div>
+          ))}
+
+          {/* Large Visualization Plate */}
+          <motion.div 
+            variants={cardVariants}
+            whileHover="hover"
+            className="md:col-span-2 premium-card p-12 bg-dark-900/10 relative h-[450px] flex flex-col justify-end group overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(2,6,23,0.8)_100%)] z-10"></div>
+            <div className="absolute inset-0 z-0 opacity-40 group-hover:opacity-60 transition-opacity">
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full animate-float">
+                  <div className="w-full h-full border border-primary-600/10 rounded-full scale-110"></div>
+                  <div className="w-2/3 h-2/3 border border-primary-500/5 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150"></div>
+                  <div className="w-1/3 h-1/3 border border-blue-600/10 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-50"></div>
+               </div>
+               <motion.div 
+                 animate={{ rotate: 360 }}
+                 transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full border-t border-primary-500/20 rounded-full"
+               ></motion.div>
+            </div>
+
+            <div className="relative z-20 space-y-6">
+              <div className="flex items-center gap-6">
+                 <h4 className="text-3xl font-black text-white uppercase tracking-tight">Global Logistics Topology</h4>
+                 <div className="h-px bg-dark-800 flex-1"></div>
+                 <span className="badge badge-primary">Dynamic Mesh</span>
+              </div>
+              <p className="text-dark-400 font-medium max-w-xl text-lg leading-relaxed">
+                Visualizing high-density autonomous traffic corridors across the planetary sector 
+                map in real-time. System efficiency currently at <span className="text-green-500 font-black">94.2%</span>.
+              </p>
+              <div className="flex gap-4">
+                 {[...Array(3)].map((_, i) => (
+                    <motion.div 
+                      key={i} 
+                      className="w-16 h-1 bg-dark-800 rounded-full overflow-hidden"
+                    >
+                       <motion.div 
+                         animate={{ x: [-80, 80] }}
+                         transition={{ repeat: Infinity, duration: 2, delay: i * 0.5 }}
+                         className="w-1/2 h-full bg-primary-600"
+                       ></motion.div>
+                    </motion.div>
+                 ))}
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Sidebar Diagnostics */}
+        <motion.div 
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+          className="lg:col-span-4 space-y-8"
+        >
+          <div className="premium-card p-10 h-full flex flex-col">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-dark-500 mb-10 border-b border-dark-900 pb-6 flex items-center justify-between">
+              System Health
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]"></span>
+            </h4>
+            
+            <div className="space-y-10 flex-1">
+              {[
+                { label: 'Mainframe Load', val: 14, color: 'bg-primary-600' },
+                { label: 'Orbital Latency', val: 8, color: 'bg-green-600' },
+                { label: 'Hub Connection', val: 100, color: 'bg-blue-600' },
+              ].map((stat, i) => (
+                <div key={i} className="space-y-4">
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                    <span className="text-dark-400">{stat.label}</span>
+                    <span className="text-white">{stat.val}%</span>
+                  </div>
+                  <div className="h-2 bg-dark-950 rounded-full overflow-hidden p-0.5 border border-dark-900">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${stat.val}%` }}
+                      transition={{ duration: 1.5, delay: 0.5 }}
+                      className={`h-full rounded-full ${stat.color} shadow-lg shadow-black/40`}
+                    ></motion.div>
+                  </div>
+                </div>
+              ))}
+
+              <div className="pt-10 space-y-6">
+                <h5 className="text-[9px] font-black uppercase tracking-widest text-dark-600">Incident History</h5>
+                <div className="space-y-3">
+                  <AnimatePresence>
+                    {Array.isArray(notifications) && notifications.map((notif, i) => (
+                      <motion.div 
+                        key={notif?.id || i}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.8 + (i * 0.1) }}
+                        className="p-5 bg-dark-950/80 border border-dark-900 rounded-[20px] flex items-center gap-5 group hover:border-primary-500/20 transition-all cursor-pointer"
+                      >
+                         <div className={`w-2.5 h-2.5 rounded-full shrink-0 group-hover:scale-150 transition-transform ${notif?.type === 'alert' ? 'bg-orange-500' : notif?.type === 'success' ? 'bg-green-500' : 'bg-primary-500'}`}></div>
+                         <p className="text-[11px] text-dark-400 leading-snug group-hover:text-white transition-colors">
+                            {notif?.msg}
+                         </p>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
+
+            <motion.div 
+               className="mt-12 p-8 premium-card bg-primary-600/10 border-primary-500/10 text-center"
+               whileHover={{ scale: 1.02 }}
+            >
+               <h4 className="text-[10px] font-black text-white uppercase tracking-[0.4em] mb-4">Protocol Optimization</h4>
+               <p className="text-[9px] text-dark-400 mb-6 font-medium leading-relaxed italic">Engine running at 4x peak efficiency using sub-orbital pathfinding.</p>
+               <motion.button 
+                 whileHover={{ scale: 1.05 }}
+                 whileTap={{ scale: 0.95 }}
+                 className="btn-primary w-full py-4 text-[9px] uppercase font-black tracking-widest"
+               >
+                 Initialize Full Diagnostic
+               </motion.button>
+            </motion.div>
+          </div>
+        </motion.div>
+      </div>
+      </div>
+    );
+  } catch (err) {
+    console.error("Dashboard Render Error:", err);
+    return (
+      <div className="flex flex-col items-center justify-center py-40 border-2 border-dashed border-primary-500/20 rounded-3xl bg-primary-600/5 mx-auto max-w-4xl">
+        <Activity className="w-16 h-16 text-primary-500 mb-6" />
+        <h3 className="text-2xl font-black text-white uppercase tracking-tight">Ops Matrix Desync</h3>
+        <p className="text-dark-400 font-medium text-center mt-2 px-8">The command center telemetry stream has encountered a structural failure. Error log cached.</p>
+        <button onClick={() => window.location.reload()} className="btn-primary mt-8 px-10 py-4 rounded-2xl">Re-establish Command Link</button>
+      </div>
+    );
+  }
 };
 
 export default Dashboard;

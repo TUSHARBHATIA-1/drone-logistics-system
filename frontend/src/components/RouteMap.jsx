@@ -67,7 +67,7 @@ const RouteMap = ({ data }) => {
                 </Marker>
 
                 {/* Delivery Markers */}
-                {deliveries.map((pos, idx) => (
+                {Array.isArray(deliveries) && deliveries.map((pos, idx) => (
                     <Marker key={idx} position={pos}>
                         <Popup>
                             <div className="font-bold text-green-500">Delivery Location {idx + 1}</div>
@@ -77,13 +77,15 @@ const RouteMap = ({ data }) => {
                 ))}
 
                 {/* Optimized Route Polyline */}
-                <Polyline 
-                    positions={route} 
-                    color="#6366f1" 
-                    weight={4} 
-                    opacity={0.8}
-                    dashArray="10, 10"
-                />
+                {Array.isArray(route) && route.length > 0 && (
+                    <Polyline 
+                        positions={route} 
+                        color="#6366f1" 
+                        weight={4} 
+                        opacity={0.8}
+                        dashArray="10, 10"
+                    />
+                )}
 
                 <FitBounds route={route} />
             </MapContainer>

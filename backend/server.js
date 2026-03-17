@@ -1,30 +1,32 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const path = require('path');
 const connectDB = require('./config/db');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { errorHandler } = require('./middlewares/errorMiddleware');
 
+// Load env
 dotenv.config();
 
-// Connect to Database
+// Connect DB
 connectDB();
 
-// Start Background Simulation
+// Start Simulation
 const { startSimulation } = require('./services/simulationService');
 startSimulation();
 
 const app = express();
 
 // Security Middleware
-app.use(helmet()); 
+app.use(helmet());
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: true,
     credentials: true
 }));
 
+// Rate Limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
@@ -32,26 +34,43 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
+// Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Lazy Loaded Routes
-app.use('/api/auth', (req, res, next) => require('./routes/authRoutes')(req, res, next));
-app.use('/api/drones', (req, res, next) => require('./routes/droneRoutes')(req, res, next));
-app.use('/api/assignments', (req, res, next) => require('./routes/assignmentRoutes')(req, res, next));
-app.use('/api/warehouses', (req, res, next) => require('./routes/warehouseRoutes')(req, res, next));
-app.use('/api/marketplace', (req, res, next) => require('./routes/marketplaceRoutes')(req, res, next));
-app.use('/api/notifications', (req, res, next) => require('./routes/notificationRoutes')(req, res, next));
-app.use('/api/emergency', (req, res, next) => require('./routes/emergencyRoutes')(req, res, next));
-app.use('/api/monitor', (req, res, next) => require('./routes/monitorRoutes')(req, res, next));
+// ✅ PROPER ROUTES (FIXED)
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/drones', require('./routes/droneRoutes'));
+app.use('/api/assignments', require('./routes/assignmentRoutes'));
+// app.use('/api/warehouses', require('./routes/warehouseRoutes'));
+app.use('/api/marketplace', require('./routes/marketplaceRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/emergency', require('./routes/emergencyRoutes'));
+app.use('/api/monitor', require('./routes/monitorRoutes'));
 
+// Health check
 app.get('/api/health', (req, res) => {
     res.json({ success: true, message: 'Server Online' });
 });
 
+// ✅ DUMMY DATA ROUTE (for demo)
+app.get('/add-dummy', async (req, res) => {
+    const Drone = require('./models/Drone');
+
+    await Drone.insertMany([
+        { name: "Drone A", status: "Active", battery: 80 },
+        { name: "Drone B", status: "Idle", battery: 65 }
+    ]);
+
+    res.send("Dummy data added");
+});
+
+// Error handler
 app.use(errorHandler);
 
-const PORT = 5000;
+// ✅ FIXED PORT (IMPORTANT)
+const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
     console.log(`Server fully operational on port ${PORT}`);
 });

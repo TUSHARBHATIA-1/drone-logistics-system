@@ -1,21 +1,21 @@
-import api from './api';
+import API from './api';
 
 export const getMarketplaceItems = async () => {
-  const { data } = await api.get('/marketplace');
-  return data.data;
+  const res = await API.get('/marketplace');
+  return res.data;
 };
 
 export const checkoutMarketplace = async (cartItems) => {
-  const { data } = await api.post('/marketplace/checkout', { cartItems });
-  return data;
+  const res = await API.post('/marketplace/checkout', { items: cartItems });
+  return res.data;
 };
 
 export const sellDrone = async (id) => {
-  const { data } = await api.post(`/marketplace/sell/${id}`);
-  return data;
+  const res = await API.post(`/marketplace/sell/${id}`);
+  return res.data;
 };
 
 export const repairDrone = async (id) => {
-  const { data } = await api.post(`/marketplace/repair/${id}`);
-  return data;
+  const res = await API.post(`/marketplace/repair/${id}`);
+  return res.data;
 };

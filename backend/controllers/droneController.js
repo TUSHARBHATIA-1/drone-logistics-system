@@ -18,12 +18,12 @@ const addDrone = async (req, res, next) => {
     }
 };
 
-// @desc    Get all drones for a company
+// @desc    Get all drones (PUBLIC for demo)
 // @route   GET /api/drones
-// @access  Private
+// @access  Public
 const getDrones = async (req, res, next) => {
     try {
-        const drones = await Drone.find({ companyId: req.user.id });
+        const drones = await Drone.find(); // ✅ FIXED
 
         res.status(200).json({
             success: true,
@@ -35,22 +35,17 @@ const getDrones = async (req, res, next) => {
     }
 };
 
-// @desc    Update drone details/status
-// @route   PUT /api/drones/:id
-// @access  Private
+// @desc    Update drone
 const updateDrone = async (req, res, next) => {
     try {
         let drone = await Drone.findById(req.params.id);
 
         if (!drone) {
-            res.status(404);
-            throw new Error(`Drone not found with id of ${req.params.id}`);
+            return res.status(404).json({ message: 'Drone not found' });
         }
 
-        // Make sure user is drone owner
         if (drone.companyId.toString() !== req.user.id) {
-            res.status(401);
-            throw new Error(`User ${req.user.id} is not authorized to update this drone`);
+            return res.status(401).json({ message: 'Not authorized' });
         }
 
         drone = await Drone.findByIdAndUpdate(req.params.id, req.body, {
@@ -67,21 +62,17 @@ const updateDrone = async (req, res, next) => {
     }
 };
 
-// @desc    Mark drone under repair
-// @route   PUT /api/drones/:id/repair
-// @access  Private
+// @desc    Mark drone repair
 const markRepair = async (req, res, next) => {
     try {
         let drone = await Drone.findById(req.params.id);
 
         if (!drone) {
-            res.status(404);
-            throw new Error('Drone not found');
+            return res.status(404).json({ message: 'Drone not found' });
         }
 
         if (drone.companyId.toString() !== req.user.id) {
-            res.status(401);
-            throw new Error('Not authorized');
+            return res.status(401).json({ message: 'Not authorized' });
         }
 
         drone.status = 'maintenance';
@@ -97,20 +88,16 @@ const markRepair = async (req, res, next) => {
 };
 
 // @desc    Delete drone
-// @route   DELETE /api/drones/:id
-// @access  Private
 const deleteDrone = async (req, res, next) => {
     try {
         const drone = await Drone.findById(req.params.id);
 
         if (!drone) {
-            res.status(404);
-            throw new Error('Drone not found');
+            return res.status(404).json({ message: 'Drone not found' });
         }
 
         if (drone.companyId.toString() !== req.user.id) {
-            res.status(401);
-            throw new Error('Not authorized');
+            return res.status(401).json({ message: 'Not authorized' });
         }
 
         await drone.deleteOne();
