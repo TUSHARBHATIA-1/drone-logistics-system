@@ -4,9 +4,8 @@
   "description": "Backend API for Drone Logistics & Route Optimization System",
   "main": "server.js",
   "scripts": {
-    "start": "npm run compile-engine && node server.js",
-    "dev": "nodemon server.js",
-    "compile-engine": "g++ ../algorithms/main.cpp -o ../algorithms/route_optimizer"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

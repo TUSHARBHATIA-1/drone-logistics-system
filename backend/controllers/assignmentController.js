@@ -1,5 +1,5 @@
-const { exec } = require('child_process');
 const path = require('path');
+const { optimizeRoute } = require('../utils/routeOptimizer');
 const Assignment = require('../models/Assignment');
 const Drone = require('../models/Drone');
 
@@ -25,79 +25,68 @@ const createAssignment = async (req, res, next) => {
 
         const selectedDrone = availableDrones[0];
 
-        // 2. Call C++ Route Optimizer
-        const binaryPath = path.join(__dirname, '../../algorithms/route_optimizer');
-        // On Windows, use route_optimizer.exe. Syntax: binary OPTIMIZE <start> <target>
-        const cmd = `"${binaryPath}" OPTIMIZE ${startNodeId || 0} ${targetNodeId || 5}`;
+        // 2. JS Route Optimizer (Replaces C++ Engine for Cloud Compatibility)
+        const result = optimizeRoute(startNodeId || 0, targetNodeId || 5);
 
-        exec(cmd, async (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Exec Error: ${error}`);
-                return res.status(500).json({ success: false, message: "Route optimization engine failed" });
+        if (!result.success) {
+            console.error(`Optimization Error: ${result.message}`);
+            return res.status(500).json({ success: false, message: "Route optimization engine failed" });
+        }
+
+        const optimizedRoute = result.route;
+        const totalDistance = result.distance;
+
+        // 3. Create Assignment with dynamic route
+        const deliveryId = `DEL-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+        
+        const assignment = await Assignment.create({
+            deliveryId,
+            pickupLocation,
+            deliveryLocations,
+            packageWeight,
+            priority,
+            deadline,
+            assignedDrone: selectedDrone._id,
+            status: 'assigned',
+            route: optimizedRoute
+        });
+
+        // 4. Mark drone as busy & set route for simulation
+        // Node mapping for frontend
+        const nodeToCoords = {
+            0: [28.6139, 77.2090], // HQ Warehouse
+            1: [28.6200, 77.2100], // Urban Hub A
+            2: [28.6100, 77.2300], // Storage Zone B
+            3: [28.6300, 77.2000], // Delivery Dock C
+            4: [28.6400, 77.2200], // Landing Pad D
+            5: [28.6500, 77.2100]  // Emergency Hub E
+        };
+
+        const routeCoords = optimizedRoute.map(name => {
+            const entries = Object.entries({
+                "Main Warehouse": 0, "Downtown Hub": 1, "Suburban Station": 2, 
+                "Industrial Area": 3, "Residential Park": 4, "Coastal Port": 5
+            });
+            const id = entries.find(([n, i]) => n === name)?.[1] || 0;
+            return nodeToCoords[id];
+        });
+
+        selectedDrone.status = 'busy';
+        selectedDrone.currentRoute = routeCoords;
+        selectedDrone.assignedDelivery = deliveryId;
+        await selectedDrone.save();
+
+        res.status(201).json({
+            success: true,
+            data: assignment,
+            distance: totalDistance,
+            estimatedTime: `${totalDistance * 2} minutes`,
+            mapData: {
+                warehouse: nodeToCoords[0],
+                pickup: nodeToCoords[startNodeId || 0],
+                deliveries: [nodeToCoords[targetNodeId || 5]],
+                route: routeCoords
             }
-
-            // Parse stdout
-            const lines = stdout.split('\n');
-            let optimizedRoute = [];
-            let totalDistance = 0;
-
-            lines.forEach(line => {
-                if (line.startsWith('ROUTE:')) optimizedRoute = line.split(':')[1].trim().split(',');
-                if (line.startsWith('DISTANCE:')) totalDistance = parseInt(line.split(':')[1].trim());
-            });
-
-            // 3. Create Assignment with dynamic route
-            const deliveryId = `DEL-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-            
-            const assignment = await Assignment.create({
-                deliveryId,
-                pickupLocation,
-                deliveryLocations,
-                packageWeight,
-                priority,
-                deadline,
-                assignedDrone: selectedDrone._id,
-                status: 'assigned',
-                route: optimizedRoute
-            });
-
-            // 4. Mark drone as busy & set route for simulation
-            selectedDrone.status = 'busy';
-            selectedDrone.currentRoute = routeCoords;
-            selectedDrone.assignedDelivery = deliveryId;
-            await selectedDrone.save();
-
-            // Coordinate Mapping for Leaflet (Node ID -> [Lat, Long])
-            const nodeToCoords = {
-                0: [28.6139, 77.2090], // HQ Warehouse
-                1: [28.6200, 77.2100], // Urban Hub A
-                2: [28.6100, 77.2300], // Storage Zone B
-                3: [28.6300, 77.2000], // Delivery Dock C
-                4: [28.6400, 77.2200], // Landing Pad D
-                5: [28.6500, 77.2100]  // Emergency Hub E
-            };
-
-            const routeCoords = optimizedRoute.map(name => {
-                const entries = Object.entries({
-                    "HQ Warehouse": 0, "Urban Hub A": 1, "Storage Zone B": 2, 
-                    "Delivery Dock C": 3, "Landing Pad D": 4, "Emergency Hub E": 5
-                });
-                const id = entries.find(([n, i]) => n === name)?.[1] || 0;
-                return nodeToCoords[id];
-            });
-
-            res.status(201).json({
-                success: true,
-                data: assignment,
-                distance: totalDistance,
-                estimatedTime: `${totalDistance * 2} minutes`,
-                mapData: {
-                    warehouse: nodeToCoords[0],
-                    pickup: nodeToCoords[startNodeId || 0],
-                    deliveries: [nodeToCoords[targetNodeId || 5]],
-                    route: routeCoords
-                }
-            });
         });
     } catch (error) {
         next(error);
