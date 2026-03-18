@@ -6,8 +6,16 @@ export const useNotifications = () => useContext(NotificationContext);
 
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState(() => {
-    const saved = localStorage.getItem('notifications');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('notifications');
+      if (saved && saved !== 'undefined' && saved !== 'null') {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      console.error('NotificationContext: Failed to parse notifications from localStorage', e);
+      localStorage.removeItem('notifications'); // clear corrupt data
+    }
+    return [];
   });
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);

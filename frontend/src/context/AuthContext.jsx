@@ -14,8 +14,13 @@ export const AuthProvider = ({ children }) => {
     if (savedToken) {
       setToken(savedToken);
     }
-    if (savedUserInfo) {
-      setUser(JSON.parse(savedUserInfo));
+    if (savedUserInfo && savedUserInfo !== 'undefined' && savedUserInfo !== 'null') {
+      try {
+        setUser(JSON.parse(savedUserInfo));
+      } catch (e) {
+        console.error('AuthContext: Failed to parse userInfo from localStorage', e);
+        localStorage.removeItem('userInfo'); // clear corrupt data
+      }
     }
     setLoading(false);
   }, []);
@@ -39,7 +44,16 @@ export const AuthProvider = ({ children }) => {
     const handleStorageChange = () => {
       setToken(localStorage.getItem('token'));
       const info = localStorage.getItem('userInfo');
-      setUser(info ? JSON.parse(info) : null);
+      if (info && info !== 'undefined' && info !== 'null') {
+        try {
+          setUser(JSON.parse(info));
+        } catch (e) {
+          console.error('AuthContext: Failed to parse userInfo on storage event', e);
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
     };
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
