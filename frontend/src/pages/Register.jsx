@@ -58,14 +58,29 @@ const Register = () => {
         setError("");
 
         try {
-            // Using absolute URL as provided in previous state, but ensuring it's the correct path
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, formData);
-            console.log("REGISTRATION SUCCESS", res.data);
-            login(res.data.token, res.data.user);
-            navigate("/dashboard");
+            console.log("REGISTRATION RESPONSE STATUS:", res.status);
+            console.log("REGISTRATION RESPONSE DATA:", res.data);
+
+            if (res.status === 200 || res.status === 201) {
+                const token = res.data?.token;
+                const user = res.data?.user;
+
+                if (token) {
+                    login(token, user);
+                } else {
+                    // Token missing but registration succeeded — still navigate
+                    console.warn("Registration succeeded but no token returned:", res.data);
+                }
+                navigate("/dashboard");
+            } else {
+                // Non-success status came through without throwing (unusual for axios)
+                setError(`Registration failed (status ${res.status}). Please try again.`);
+            }
         } catch (err) {
             console.error("REGISTRATION ERROR", err);
-            setError(err.response?.data?.message || "Registration Failed. Check connection to Mission Control.");
+            const serverMessage = err.response?.data?.message || err.response?.data?.error;
+            setError(serverMessage || "Registration Failed. Check connection to Mission Control.");
         } finally {
             setLoading(false);
         }
