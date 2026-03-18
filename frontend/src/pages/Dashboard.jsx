@@ -47,7 +47,7 @@ const Dashboard = () => {
 
   const handleSimulateEmergency = async () => {
     try {
-      const response = await axios.post('/api/emergency/trigger', {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/emergency/trigger`, {
         droneId: 'd2',
         triggerType: 'System-wide Sensor Failure',
         currentLocationID: 4

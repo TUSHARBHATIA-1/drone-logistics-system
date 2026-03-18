@@ -59,7 +59,7 @@ const Register = () => {
 
         try {
             // Using absolute URL as provided in previous state, but ensuring it's the correct path
-            const res = await axios.post("/api/auth/register", formData);
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, formData);
             console.log("REGISTRATION SUCCESS", res.data);
             login(res.data.token, res.data.user);
             navigate("/dashboard");
