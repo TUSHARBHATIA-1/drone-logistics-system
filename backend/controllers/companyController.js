@@ -1,10 +1,5 @@
 const CompanyProfile = require('../models/CompanyProfile');
 
-// ─────────────────────────────────────────────────────────
-// @route   POST /api/company/setup
-// @access  Private
-// @desc    Create or update company drone configuration
-// ─────────────────────────────────────────────────────────
 const setupCompany = async (req, res) => {
   try {
     const {
@@ -18,39 +13,31 @@ const setupCompany = async (req, res) => {
       maintenanceNotes,
     } = req.body;
 
-    // ── Manual validation (before hitting the model) ──────
-    const missing = [];
-    if (totalDrones === undefined || totalDrones === '')  missing.push('totalDrones');
-    if (activeDrones === undefined || activeDrones === '') missing.push('activeDrones');
-    if (inactiveDrones === undefined || inactiveDrones === '') missing.push('inactiveDrones');
-    if (maxRange === undefined || maxRange === '')         missing.push('maxRange');
-    if (minRange === undefined || minRange === '')         missing.push('minRange');
-    if (!location?.address)                               missing.push('location.address');
-
-    if (missing.length > 0) {
+    // Validation
+    if (!location?.address) {
       return res.status(400).json({
         success: false,
-        message: `Missing required fields: ${missing.join(', ')}`,
+        message: "Location address is required",
       });
     }
 
-    // ── Numeric coercion & business rules ─────────────────
-    const total    = Number(totalDrones);
-    const active   = Number(activeDrones);
+    const total = Number(totalDrones);
+    const active = Number(activeDrones);
     const inactive = Number(inactiveDrones);
-    const maxR     = Number(maxRange);
-    const minR     = Number(minRange);
+    const maxR = Number(maxRange);
+    const minR = Number(minRange);
 
     if (active + inactive !== total) {
       return res.status(400).json({
         success: false,
-        message: `Active (${active}) + Inactive (${inactive}) must equal Total (${total})`,
+        message: "Active + Inactive must equal Total drones",
       });
     }
+
     if (minR > maxR) {
       return res.status(400).json({
         success: false,
-        message: 'Minimum range cannot be greater than maximum range',
+        message: "Min range cannot exceed max range",
       });
     }
 
@@ -64,60 +51,62 @@ const setupCompany = async (req, res) => {
       location: {
         address: location.address,
         coordinates: {
-          lat: location.lat ? Number(location.lat) : undefined,
-          lng: location.lng ? Number(location.lng) : undefined,
+          lat: location?.coordinates?.lat
+            ? Number(location.coordinates.lat)
+            : undefined,
+          lng: location?.coordinates?.lng
+            ? Number(location.coordinates.lng)
+            : undefined,
         },
       },
-      droneTypes:       Array.isArray(droneTypes) ? droneTypes.filter(Boolean) : [],
-      maintenanceNotes: maintenanceNotes || '',
+      droneTypes: Array.isArray(droneTypes) ? droneTypes : [],
+      maintenanceNotes: maintenanceNotes || "",
     };
 
-    // ── Upsert: create new or update existing profile ─────
     const profile = await CompanyProfile.findOneAndUpdate(
       { userId: req.user._id || req.user.id },
       profileData,
       { new: true, upsert: true, runValidators: true }
     );
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
-      message: 'Company profile configured successfully!',
+      message: "Company profile saved",
       data: profile,
     });
+
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      const msgs = Object.values(err.errors).map((e) => e.message);
-      return res.status(400).json({ success: false, message: msgs.join(', ') });
-    }
-    // Business rule error from pre-save hook
-    if (err.message.includes('must equal') || err.message.includes('cannot exceed')) {
-      return res.status(400).json({ success: false, message: err.message });
-    }
-    res.status(500).json({ success: false, message: 'Server error: ' + err.message });
+    console.error("Company Setup Error:", err);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
   }
 };
 
-// ─────────────────────────────────────────────────────────
-// @route   GET /api/company/profile
-// @access  Private
-// @desc    Get the current user's company profile
-// ─────────────────────────────────────────────────────────
 const getCompanyProfile = async (req, res) => {
   try {
-    const profile = await CompanyProfile.findOne({ userId: req.user._id || req.user.id })
-      .populate('userId', 'name email username');
+    const profile = await CompanyProfile.findOne({
+      userId: req.user._id || req.user.id,
+    });
 
     if (!profile) {
       return res.status(404).json({
         success: false,
-        message: 'Company profile not found. Please complete setup.',
-        setupRequired: true,
+        message: "Profile not found",
       });
     }
 
     res.json({ success: true, data: profile });
+
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Server error: ' + err.message });
+    console.error("Get Profile Error:", err);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
   }
 };
 
