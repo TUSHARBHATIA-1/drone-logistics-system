@@ -50,7 +50,17 @@ const droneSchema = new mongoose.Schema({
     assignedDelivery: {
         type: String,
         default: null
+    },
+    locationCity: {
+        type: String,
+        default: 'New Delhi',
+        trim: true
+    },
+    image: {
+        type: String,
+        default: null
     }
+
 }, {
     timestamps: true
 });

@@ -47,6 +47,7 @@ app.use('/api/marketplace', require('./routes/marketplaceRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/emergency', require('./routes/emergencyRoutes'));
 app.use('/api/monitor', require('./routes/monitorRoutes'));
+app.use('/api/company', require('./routes/companyRoutes'));
 
 // Health check
 app.get('/api/health', (req, res) => {

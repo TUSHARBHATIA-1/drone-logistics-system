@@ -1,21 +1,16 @@
 import API from './api';
 
-export const getDrones = async () => {
-  const res = await API.get('/drones');
-  return res.data;
-};
+// Get drones — optionally filtered by the logged-in company
+export const getDrones = () => API.get('/drones');
 
-export const addDrone = async (data) => {
-  const res = await API.post('/drones', data);
-  return res.data;
-};
+// Create a drone (must be authenticated)
+export const addDrone = (data) => API.post('/drones', data);
 
-export const updateDrone = async (id, data) => {
-  const res = await API.put(`/drones/${id}`, data);
-  return res.data;
-};
+// Update any drone field (status, battery, location, etc.)
+export const updateDrone = (id, data) => API.put(`/drones/${id}`, data);
 
-export const deleteDrone = async (id) => {
-  const res = await API.delete(`/drones/${id}`);
-  return res.data;
-};
+// Quick shortcut: mark a drone as maintenance
+export const markRepair = (id) => API.put(`/drones/${id}/repair`);
+
+// Delete / decommission a drone
+export const deleteDrone = (id) => API.delete(`/drones/${id}`);

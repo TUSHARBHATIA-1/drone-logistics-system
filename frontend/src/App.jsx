@@ -13,6 +13,7 @@ import DroneMonitoring from './pages/DroneMonitoring';
 import Payment from './pages/Payment';
 import Success from './pages/Success';
 import Landing from './pages/Landing';
+import CompanySetup from './pages/CompanySetup';
 
 import Navbar from './components/Navbar';
 import Cart from './components/Cart';
@@ -76,6 +77,7 @@ function AppContent() {
               <Route path="/monitoring" element={<PrivateRoute><PageWrapper><DroneMonitoring /></PageWrapper></PrivateRoute>} />
               <Route path="/payment" element={<PrivateRoute><PageWrapper><Payment /></PageWrapper></PrivateRoute>} />
               <Route path="/success" element={<PrivateRoute><PageWrapper><Success /></PageWrapper></PrivateRoute>} />
+              <Route path="/setup-company" element={<PrivateRoute><PageWrapper><CompanySetup /></PageWrapper></PrivateRoute>} />
 
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/" />} />

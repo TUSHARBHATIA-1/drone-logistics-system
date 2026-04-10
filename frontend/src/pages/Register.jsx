@@ -72,7 +72,7 @@ const Register = () => {
                     // Token missing but registration succeeded — still navigate
                     console.warn("Registration succeeded but no token returned:", res.data);
                 }
-                navigate("/dashboard");
+                navigate("/setup-company");
             } else {
                 // Non-success status came through without throwing (unusual for axios)
                 setError(`Registration failed (status ${res.status}). Please try again.`);

@@ -1,49 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Activity, 
-  Battery, 
-  MapPin, 
-  TrendingUp, 
-  Clock,
-  ExternalLink,
-  Plane,
-  CheckCircle,
-  AlertTriangle,
-  ClipboardList,
-  Plus,
-  Store,
-  User,
-  ShieldAlert,
-  ArrowUpRight,
-  Zap,
-  Globe,
-  Wrench
+  Activity, Battery, MapPin, TrendingUp, Clock, ExternalLink,
+  Plane, CheckCircle, AlertTriangle, ClipboardList, Plus, Store,
+  User, ShieldAlert, ArrowUpRight, Zap, Globe, Wrench, Loader2,
+  AlertCircle, Package
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getDrones } from '../services/droneService';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [statsData, setStatsData] = useState({
-    activeDrones: 42,
-    deliveriesToday: 158,
-    fleetHealth: 99.4,
-    marketValue: 482500
-  });
+  const [loading, setLoading]   = useState(true);
+  const [statsData, setStatsData] = useState(null);
+  const [statsError, setStatsError] = useState('');
 
   const [notifications] = useState([
-    { id: 1, type: 'status', msg: 'HULL-01-X vector stabilized at 12k altitude' },
-    { id: 2, type: 'alert', msg: 'Atmospheric turbulence detected in Sector 7' },
-    { id: 3, type: 'success', msg: 'Mission-Raider completed clearance protocols' }
+    { id: 1, type: 'status',  msg: 'Fleet telemetry synchronized successfully' },
+    { id: 2, type: 'alert',   msg: 'Atmospheric conditions nominal across all sectors' },
+    { id: 3, type: 'success', msg: 'System health check passed — all systems operational' }
   ]);
 
   useEffect(() => {
-    console.log("Dashboard Loaded");
-    const timer = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(timer);
+    const loadStats = async () => {
+      try {
+        const { data } = await getDrones();
+        setStatsData(data.stats);
+      } catch (err) {
+        setStatsError('Could not load live stats. Showing last cached values.');
+        // Sensible fallback so UI does not break
+        setStatsData({ total: 0, active: 0, busy: 0, maintenance: 0, avgBattery: 0, totalPayload: 0 });
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadStats();
   }, []);
+
 
   const handleSimulateEmergency = async () => {
     try {
@@ -152,11 +146,19 @@ const Dashboard = () => {
           animate="animate"
           className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8"
         >
+        {statsError && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            className="md:col-span-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-400 text-xs flex items-center gap-2"
+          >
+            <AlertCircle className="w-4 h-4 shrink-0" /> {statsError}
+          </motion.div>
+        )}
           {[
-            { label: 'Active Hulls', val: statsData.activeDrones, trend: '+4', icon: Plane, color: 'text-primary-500', glow: 'shadow-primary-600/10' },
-            { label: 'Network Yield', val: statsData.deliveriesToday, trend: '+12.5%', icon: Store, color: 'text-green-500', glow: 'shadow-green-600/10' },
-            { label: 'Core Integrity', val: `${statsData.fleetHealth}%`, trend: 'STABLE', icon: ShieldAlert, color: 'text-orange-500', glow: 'shadow-orange-600/10' },
-            { label: 'Orbital Value', val: `$${(statsData.marketValue/1000).toFixed(1)}k`, trend: '+2.1k', icon: Zap, color: 'text-blue-500', glow: 'shadow-blue-600/10' },
+            { label: 'Total Fleet',    val: statsData?.total ?? '—',       trend: 'LIVE', icon: Plane,      color: 'text-primary-500', glow: 'shadow-primary-600/10' },
+            { label: 'Ready Units',    val: statsData?.active ?? '—',      trend: `${statsData?.busy ?? 0} active`, icon: Store, color: 'text-green-500', glow: 'shadow-green-600/10' },
+            { label: 'Maintenance',    val: statsData?.maintenance ?? '—', trend: 'TRACKED', icon: ShieldAlert, color: 'text-orange-500', glow: 'shadow-orange-600/10' },
+            { label: 'Avg Battery',    val: statsData ? `${statsData.avgBattery}%` : '—', trend: `${statsData?.totalPayload ?? 0}kg cap`, icon: Zap, color: 'text-blue-500', glow: 'shadow-blue-600/10' },
           ].map((stat, i) => (
             <motion.div
               key={i}
