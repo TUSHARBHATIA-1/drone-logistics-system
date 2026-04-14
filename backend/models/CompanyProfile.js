@@ -8,55 +8,41 @@ const companyProfileSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-
-    totalDrones: {
-      type: Number,
-      required: true,
-      min: 0,
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
-    activeDrones: {
-      type: Number,
-      required: true,
-      min: 0,
+    name: {
+      type: String,
     },
-    inactiveDrones: {
-      type: Number,
-      required: true,
-      min: 0,
+    address: {
+      type: String,
     },
-
-    maxRange: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    minRange: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-
     location: {
-      address: {
+      type: {
         type: String,
-        required: true,
-        trim: true,
+        enum: ["Point"],
+        default: "Point"
       },
       coordinates: {
-        lat: Number,
-        lng: Number,
-      },
+        type: [Number],
+        required: true
+      }
     },
-
+    // The rest of the fields kept for UI backward compatibility
+    totalDrones: { type: Number, default: 0 },
+    activeDrones: { type: Number, default: 0 },
+    inactiveDrones: { type: Number, default: 0 },
+    maxRange: { type: Number, default: 0 },
+    minRange: { type: Number, default: 0 },
     droneTypes: [{ type: String }],
-    maintenanceNotes: { type: String },
-
+    maintenanceNotes: { type: String, default: "" },
     isSetupComplete: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
 
-// Index (important)
+// Compound unique index on userId
 companyProfileSchema.index({ userId: 1 }, { unique: true });
 
 module.exports = mongoose.model('CompanyProfile', companyProfileSchema);

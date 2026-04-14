@@ -1,13 +1,9 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+const { createCompany, getMyCompany } = require("../controllers/companyController");
+const { protect } = require("../middlewares/authMiddleware");
 
-const { protect } = require('../middlewares/authMiddleware');
-const {
-  setupCompany,
-  getCompanyProfile,
-} = require('../controllers/companyController');
-
-router.post('/setup', protect, setupCompany);
-router.get('/profile', protect, getCompanyProfile);
+router.post("/company", protect, createCompany);
+router.get("/company/me", protect, getMyCompany);
 
 module.exports = router;

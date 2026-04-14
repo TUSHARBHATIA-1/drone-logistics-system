@@ -1,131 +1,128 @@
 'use strict';
 
-// ── 1. Load environment FIRST — before any other require ─────────
+// ── 1. Load environment FIRST ─────────────────────────────
 require('dotenv').config();
 
-// ── 2. Debug log: confirm env is loaded (visible in Render logs) ──
+// ── 2. Debug logs ─────────────────────────────────────────
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 console.log('  Drone Logistics API — Boot Sequence');
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log(`  NODE_ENV    : ${process.env.NODE_ENV    || 'development'}`);
-console.log(`  PORT        : ${process.env.PORT        || 5000}`);
-console.log(`  FRONTEND_URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+console.log(`  NODE_ENV    : ${process.env.NODE_ENV || 'development'}`);
+console.log(`  PORT        : ${process.env.PORT || 5000}`);
+console.log(`  FRONTEND_URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
 console.log(`  MONGO_URI   : ${process.env.MONGO_URI ? '✅ set' : '❌ missing'}`);
-console.log(`  JWT_SECRET  : ${process.env.JWT_SECRET  ? '✅ set' : '❌ missing'}`);
+console.log(`  JWT_SECRET  : ${process.env.JWT_SECRET ? '✅ set' : '❌ missing'}`);
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-const express    = require('express');
-const cors       = require('cors');
-const helmet     = require('helmet');
-const rateLimit  = require('express-rate-limit');
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
-const connectDB               = require('./config/db');
-const { startSimulation }     = require('./services/simulationService');
-const { errorHandler }        = require('./middlewares/errorMiddleware');
+const connectDB = require('./config/db');
+const { startSimulation } = require('./services/simulationService');
+const { errorHandler } = require('./middlewares/errorMiddleware');
 
-// ── 3. Connect to MongoDB ─────────────────────────────────────────
+// ── 3. Connect DB ─────────────────────────────────────────
 connectDB();
 
-// ── 4. Only run simulation in development ─────────────────────────
-//    On Render (production), this would burn CPU and skew demo data.
+// ── 4. Simulation (dev only) ──────────────────────────────
 if (process.env.NODE_ENV !== 'production') {
-  console.log('[SIM] Starting drone telemetry simulation (dev only)');
-  startSimulation();
+    console.log('[SIM] Starting drone telemetry simulation (dev only)');
+    startSimulation();
 } else {
-  console.log('[SIM] Simulation disabled in production');
+    console.log('[SIM] Simulation disabled in production');
 }
 
-// ── 5. Express app ────────────────────────────────────────────────
+// ── 5. App init ───────────────────────────────────────────
 const app = express();
 
-// ── 6. Security headers ───────────────────────────────────────────
+// ── 6. Security ───────────────────────────────────────────
 app.use(helmet());
 
-// ── 7. CORS — restrict to known frontend origin in production ─────
-//    "origin: true" mirrors the request origin back, effectively
-//    allowing ANY domain — insecure for a production API.
+// ── 7. CORS ───────────────────────────────────────────────
 const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:5173',
-  'http://localhost:3000', // common alternative dev port
+    process.env.FRONTEND_URL || 'http://localhost:3000',
+    'http://localhost:5173',
 ];
 
 app.use(cors({
-  origin: (requestOrigin, callback) => {
-    // Allow requests with no origin (Postman, server-to-server, curl)
-    if (!requestOrigin) return callback(null, true);
-    if (allowedOrigins.includes(requestOrigin)) return callback(null, true);
-    // In development allow all; in production block unknown origins
-    if (process.env.NODE_ENV !== 'production') return callback(null, true);
-    callback(new Error(`CORS blocked: ${requestOrigin} is not an allowed origin`));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+
+        if (process.env.NODE_ENV !== 'production') return callback(null, true);
+
+        return callback(new Error(`CORS blocked: ${origin}`));
+    },
+    credentials: true,
 }));
 
-// ── 8. Rate limiting — protect /api/* from abuse ──────────────────
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,       // 15-minute window
-  max: 100,                        // max 100 requests per window per IP
-  standardHeaders: true,           // include RateLimit-* headers
-  legacyHeaders: false,
-  message: { success: false, message: 'Too many requests — please try again later.' },
-});
-app.use('/api/', apiLimiter);
+// ── 8. Rate Limiter (FIXED) ───────────────────────────────
+if (process.env.NODE_ENV === 'production') {
+    const apiLimiter = rateLimit({
+        windowMs: 15 * 60 * 1000,
+        max: 100,
+        standardHeaders: true,
+        legacyHeaders: false,
+        message: {
+            success: false,
+            message: 'Too many requests — please try again later.'
+        },
+    });
 
-// ── 9. Body parsing ───────────────────────────────────────────────
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+    app.use('/api/', apiLimiter);
+} else {
+    console.log('⚠️ Rate limiter disabled in development');
+}
 
-// ── 10. Routes ────────────────────────────────────────────────────
-app.use('/api/auth',          require('./routes/authRoutes'));
-app.use('/api/drones',        require('./routes/droneRoutes'));
-app.use('/api/assignments',   require('./routes/assignmentRoutes'));
-app.use('/api/marketplace',   require('./routes/marketplaceRoutes'));
+// ── 9. Body parser ────────────────────────────────────────
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ── 10. Routes ────────────────────────────────────────────
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/drones', require('./routes/droneRoutes'));
+app.use('/api/assignments', require('./routes/assignmentRoutes'));
+app.use('/api/marketplace', require('./routes/marketplaceRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
-app.use('/api/emergency',     require('./routes/emergencyRoutes'));
-app.use('/api/monitor',       require('./routes/monitorRoutes'));
-app.use('/api/company',       require('./routes/companyRoutes'));
+app.use('/api/emergency', require('./routes/emergencyRoutes'));
+app.use('/api/monitor', require('./routes/monitorRoutes'));
+app.use('/api', require('./routes/companyRoutes'));
 
-// ── 11. Health check ──────────────────────────────────────────────
-//    Render pings this to verify the service is alive.
+// ── 11. Health check ──────────────────────────────────────
 app.get('/api/health', (_req, res) => {
-  res.json({
-    success:   true,
-    status:    'online',
-    env:       process.env.NODE_ENV || 'development',
-    timestamp: new Date().toISOString(),
-  });
+    res.json({
+        success: true,
+        status: 'online',
+        env: process.env.NODE_ENV || 'development',
+        timestamp: new Date().toISOString(),
+    });
 });
 
-// ── 12. 404 handler — catches unmatched routes ────────────────────
-app.use((_req, res) => {
-  res.status(404).json({ success: false, message: 'Route not found' });
-});
+// ── 12. 404 handler removed ─────────────────────────────────
 
-// ── 13. Global error handler ──────────────────────────────────────
-//    Must be registered AFTER all routes; Express recognises it by
-//    the 4-param signature (err, req, res, next).
+// ── 13. Error handler ─────────────────────────────────────
 app.use(errorHandler);
 
-// ── 14. Start server ──────────────────────────────────────────────
-const PORT = process.env.PORT || 5000;   // Render injects PORT automatically
+// ── 14. Start server ──────────────────────────────────────
+const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {
-  console.log(`\n🚀 Server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]\n`);
+    console.log(`\n🚀 Server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]\n`);
 });
 
-// Catch port-binding errors (e.g. EADDRINUSE on local restart)
+// ── 15. Error handling ────────────────────────────────────
 server.on('error', (err) => {
-  console.error('❌ Server startup error:', err.message);
-  process.exit(1);
+    console.error('❌ Server startup error:', err.message);
+    process.exit(1);
 });
 
-// Graceful shutdown — lets in-flight requests finish before Render restarts
+// ── 16. Graceful shutdown ─────────────────────────────────
 process.on('SIGTERM', () => {
-  console.log('📴 SIGTERM received — shutting down gracefully');
-  server.close(() => {
-    console.log('✅ HTTP server closed');
-    process.exit(0);
-  });
+    console.log('📴 SIGTERM received — shutting down');
+    server.close(() => {
+        console.log('✅ Server closed');
+        process.exit(0);
+    });
 });

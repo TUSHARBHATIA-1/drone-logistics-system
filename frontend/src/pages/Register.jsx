@@ -40,7 +40,7 @@ const Register = () => {
     // Prevent access to register if already authenticated
     React.useEffect(() => {
         if (token) {
-            navigate("/dashboard");
+            navigate("/setup-company");
         }
     }, [token, navigate]);
 

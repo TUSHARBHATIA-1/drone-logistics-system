@@ -35,6 +35,18 @@
   .premium-card::before {
     content: '';
     @apply absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100;
+    pointer-events: none;  /* ← CRITICAL: stops pseudo-element blocking inputs */
+    z-index: 0;
+  }
+
+  /* Ensure all interactive children sit above the ::before overlay */
+  .premium-card input,
+  .premium-card textarea,
+  .premium-card button,
+  .premium-card select,
+  .premium-card label {
+    position: relative;
+    z-index: 1;
   }
 
   .btn-primary {

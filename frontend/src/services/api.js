@@ -5,23 +5,35 @@ const API = axios.create({
   withCredentials: true
 });
 
-// Attach token to every request
+// Attach JWT token to every outgoing request
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem('token');
   if (token) {
     req.headers.Authorization = `Bearer ${token}`;
+    console.log(`[API] ▶ ${req.method?.toUpperCase()} ${req.baseURL}${req.url} — token ✅`);
+  } else {
+    console.warn(`[API] ▶ ${req.method?.toUpperCase()} ${req.baseURL}${req.url} — token ❌ missing`);
   }
   return req;
 });
 
-// Handle unauthorized (auto logout)
+// Handle responses — auto-logout on 401
 API.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    console.log(`[API] ◀ ${res.status} ${res.config?.url}`, res.data);
+    return res;
+  },
   (error) => {
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userInfo');
-      window.location.href = '/login';
+    if (error.response) {
+      console.error(`[API] ◀ ${error.response.status} ${error.config?.url}`, error.response.data);
+      if (error.response.status === 401) {
+        console.warn('[API] 401 Unauthorized — clearing session and redirecting to /login');
+        localStorage.removeItem('token');
+        localStorage.removeItem('userInfo');
+        window.location.href = '/login';
+      }
+    } else {
+      console.error('[API] Network error — no response received:', error.message);
     }
     return Promise.reject(error);
   }
